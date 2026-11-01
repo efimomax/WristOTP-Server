@@ -483,3 +483,6 @@ $RECYCLE.BIN/
 
 # Local deployment settings (host, public URL) / Локальные настройки деплоя
 deploy/deploy.env
+
+# Local counter file (all-time deliveries) / Локальный файл счётчика доставок
+WristOTP.Server/App_Data/

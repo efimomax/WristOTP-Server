@@ -84,6 +84,7 @@
     <ul>
       <li><strong>No request log is kept.</strong> The server does not record IP addresses, times or contents of requests to its disk.</li>
       <li>To limit abuse, the server keeps the IP address of each request in memory for about one minute (rate limiting); it is never written to disk.</li>
+      <li>The only thing the server keeps on disk is <strong>one anonymous number</strong> — the total count of successful deliveries to watches, shown on the landing page. It contains nothing about you, your device or your requests.</li>
       <li>The landing page shows anonymous counters only (how many items are waiting, total sent and received).</li>
     </ul>
 
@@ -99,7 +100,7 @@
     <ul>
       <li>No analytics, advertising or tracking SDKs; no cookies on this website.</li>
       <li>We don't sell, rent or share data with anyone.</li>
-      <li>The relay runs on a virtual server rented from a hosting provider. Your data exists on it only in memory (RAM), only in encrypted form that only your watch can decrypt, and for no longer than one minute — nothing is ever written to the server's disk, not even encrypted. So neither we nor the hosting provider can read your accounts.</li>
+      <li>The relay runs on a virtual server rented from a hosting provider. Your data exists on it only in memory (RAM), only in encrypted form that only your watch can decrypt, and for no longer than one minute — none of your data is ever written to the server's disk, not even encrypted. So neither we nor the hosting provider can read your accounts.</li>
     </ul>
 
     <h2>7. Deleting your data</h2>
@@ -152,6 +153,7 @@
     <ul>
       <li><strong>Журнал запросов не ведётся.</strong> Сервер не записывает на диск IP-адреса, время и содержимое запросов.</li>
       <li>Для защиты от злоупотреблений сервер около минуты держит в памяти IP-адрес запроса (ограничение частоты запросов); на диск он никогда не записывается.</li>
+      <li>Единственное, что сервер хранит на диске, — <strong>одно анонимное число</strong>: общее количество успешных доставок на часы, которое показывается на стартовой странице. В нём нет ничего о вас, вашем устройстве или ваших запросах.</li>
       <li>Стартовая страница показывает только анонимные счётчики (сколько записей ожидает, сколько всего отправлено и получено).</li>
     </ul>
 
@@ -167,7 +169,7 @@
     <ul>
       <li>Нет аналитики, рекламы и SDK для слежки; на этом сайте нет cookie.</li>
       <li>Мы не продаём, не сдаём и не передаём данные третьим лицам.</li>
-      <li>Релей работает на виртуальном сервере, арендованном у хостинг-провайдера. Ваши данные бывают на нём только в оперативной памяти, только в зашифрованном виде, который могут расшифровать лишь ваши часы, и не дольше одной минуты — на диск сервера ничего не записывается, даже в зашифрованном виде. Поэтому ни мы, ни хостинг-провайдер не можем прочитать ваши аккаунты.</li>
+      <li>Релей работает на виртуальном сервере, арендованном у хостинг-провайдера. Ваши данные бывают на нём только в оперативной памяти, только в зашифрованном виде, который могут расшифровать лишь ваши часы, и не дольше одной минуты — никакие ваши данные на диск сервера не записываются, даже в зашифрованном виде. Поэтому ни мы, ни хостинг-провайдер не можем прочитать ваши аккаунты.</li>
     </ul>
 
     <h2>7. Удаление данных</h2>

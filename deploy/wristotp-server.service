@@ -20,6 +20,11 @@ NoNewPrivileges=true
 ProtectSystem=strict
 ProtectHome=true
 PrivateTmp=true
+# Writable /var/lib/wristotp-server for the all-time delivery counter (one
+# number, see Services/DeliveryCounter.cs); the rest of the system stays
+# read-only. / Доступный для записи /var/lib/wristotp-server для счётчика
+# доставок (одно число); остальная система — только для чтения.
+StateDirectory=wristotp-server
 
 [Install]
 WantedBy=multi-user.target

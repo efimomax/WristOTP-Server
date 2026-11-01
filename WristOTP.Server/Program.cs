@@ -61,6 +61,7 @@ builder.WebHost.ConfigureKestrel(options =>
 });
 
 builder.Services.AddMemoryCache();
+builder.Services.AddSingleton<DeliveryCounter>();
 builder.Services.AddSingleton<RelayStats>();
 builder.Services.AddSingleton<RelayStore>();
 #if DEBUG
@@ -187,6 +188,7 @@ app.MapGet("/api/v1/stats", (RelayStore store, RelayStats stats) =>
         activeCount = store.ActiveCount,
         totalPut = stats.TotalPut,
         totalClaimed = stats.TotalClaimed,
+        deliveredAllTime = stats.DeliveredAllTime,
         startedAtUtc = stats.StartedAtUtc,
         recentBuckets,
         bucketIndex,

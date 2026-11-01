@@ -32,6 +32,13 @@ public sealed class RelayStats
     private long _totalPut;
     private long _totalClaimed;
 
+    private readonly DeliveryCounter _deliveryCounter;
+
+    public RelayStats(DeliveryCounter deliveryCounter)
+    {
+        _deliveryCounter = deliveryCounter;
+    }
+
     public DateTimeOffset StartedAtUtc { get; } = DateTimeOffset.UtcNow;
 
     public void RecordPut()
@@ -43,12 +50,17 @@ public sealed class RelayStats
     public void RecordClaimed()
     {
         Interlocked.Increment(ref _totalClaimed);
+        _deliveryCounter.Increment();
         RecordActivity();
     }
 
     public long TotalPut => Interlocked.Read(ref _totalPut);
 
     public long TotalClaimed => Interlocked.Read(ref _totalClaimed);
+
+    // All-time successful deliveries (survives restarts) — see DeliveryCounter.
+    // Успешные доставки за всё время (переживают перезапуск) — см. DeliveryCounter.
+    public long DeliveredAllTime => _deliveryCounter.Value;
 
     // Returns exactly BucketCount numbers, oldest to newest: events (PUT+GET)
     // in each 5-second slice of the last minute. bucketIndex/bucketElapsedMs

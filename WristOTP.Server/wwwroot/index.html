@@ -136,6 +136,20 @@
   .stat .n.flash{text-shadow:0 0 18px rgba(51,153,255,.85)}
   .stat .l{font-size:.78rem;color:var(--text-secondary);margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
 
+  /* All-time successful deliveries (persisted on the server, survives
+     restarts). Счётчик успешных доставок за всё время (хранится на сервере,
+     переживает перезапуски). */
+  .delivered{
+    margin-top:22px;display:flex;align-items:baseline;justify-content:center;
+    gap:10px;flex-wrap:wrap;text-align:center;
+  }
+  .delivered-n{
+    font-size:2.4rem;font-weight:800;font-variant-numeric:tabular-nums;
+    color:var(--accent);transition:text-shadow .3s ease;
+  }
+  .delivered-n.flash{text-shadow:0 0 22px rgba(51,153,255,.9)}
+  .delivered-l{color:var(--text-secondary);font-size:.95rem}
+
   /* Live activity strip: exactly 60 seconds wide (= the cache entry TTL,
      RelayStore.Ttl), 12 columns of 5 s. A column enters on the right and
      leaves on the left after 60 s: .pulse-track slides left continuously via
@@ -400,6 +414,11 @@
       <div class="stat"><div class="n" id="stat-put">–</div><div class="l">Total received</div></div>
       <div class="stat"><div class="n" id="stat-claimed">–</div><div class="l">Total picked up</div></div>
       <div class="stat"><div class="n" id="stat-uptime">–</div><div class="l">Uptime</div></div>
+    </div>
+
+    <div class="delivered" aria-live="polite">
+      <span class="delivered-n" id="stat-delivered">–</span>
+      <span class="delivered-l">accounts delivered to watches since launch</span>
     </div>
 
     <div class="pulse-caption">Requests received · number per 5s, last 60 seconds</div>
@@ -730,6 +749,7 @@
       animateNumber(document.getElementById("stat-active"), s.activeCount);
       animateNumber(document.getElementById("stat-put"), s.totalPut);
       animateNumber(document.getElementById("stat-claimed"), s.totalClaimed);
+      animateNumber(document.getElementById("stat-delivered"), s.deliveredAllTime);
       startedAtIso = s.startedAtUtc;
       document.getElementById("debug-btn").hidden = !s.isDebugBuild;
 

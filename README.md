@@ -9,8 +9,10 @@ The server part of **WristOTP**, a TOTP authenticator for Huawei watches
 account bundle from the phone app to the watch app.
 
 - An entry lives in memory for **at most one minute** or until it is read
-  once — whichever comes first. Nothing is written to disk; there is no
-  database, no user accounts, no backups.
+  once — whichever comes first. No user data is written to disk; there is no
+  database, no user accounts, no backups. The only file the relay writes is
+  one anonymous number: the all-time count of successful deliveries shown on
+  the landing page.
 - The server **never sees plaintext**. The phone encrypts the bundle with
   AES-256-GCM; the key and the entry ID (`LookupID`) are both derived with
   HKDF-SHA256 from the watch's device ID and a 6-digit code the user types
@@ -87,8 +89,10 @@ request log is kept — `deploy/nginx.conf.example` is configured that way.
 зашифрованный пакет аккаунтов из приложения на телефоне в приложение на часах.
 
 - Запись живёт в памяти **не дольше минуты** или до первого чтения — что
-  наступит раньше. На диск ничего не пишется; нет базы данных, учётных
-  записей пользователей и бэкапов.
+  наступит раньше. Никакие данные пользователей на диск не пишутся; нет базы
+  данных, учётных записей пользователей и бэкапов. Единственный файл, который
+  пишет релей, — одно анонимное число: общее количество успешных доставок для
+  стартовой страницы.
 - Сервер **никогда не видит открытых данных**. Телефон шифрует пакет
   AES-256-GCM; и ключ, и идентификатор записи (`LookupID`) выводятся через
   HKDF-SHA256 из идентификатора часов и 6-значного кода, который
