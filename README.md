@@ -49,9 +49,23 @@ curl http://localhost:8443/api/v1/tokens/abc123
 
 ### Run your own relay
 
-See [deploy/README.md](deploy/README.md): systemd unit, nginx example and a
-one-command deploy script. Then set your relay's address in the watch and
-phone apps.
+For maximum privacy you don't have to trust the public relay at all.
+
+**On your own computer (home network):**
+
+1. Install the .NET 10 SDK, clone this repository and run `dotnet run` in
+   `WristOTP.Server/`. The Debug build listens on all interfaces, port 8443.
+2. Find your computer's local IP address (e.g. `192.168.1.20`) and allow
+   incoming connections on port 8443 in its firewall.
+3. On the watch: **Settings → Relay server** → `http://192.168.1.20:8443` →
+   *Test connection* → *Save*. In the phone app: **Settings** → the same address.
+4. The watch, the phone and the computer must be on the same Wi-Fi network
+   while you sync. Plain `http://` is fine here: the data is end-to-end
+   encrypted anyway.
+
+**On a server with a domain and HTTPS:** see [deploy/README.md](deploy/README.md)
+(systemd unit, nginx example, one-command deploy script), then set
+`https://your-domain` in both apps.
 
 ### Configuration
 
@@ -106,9 +120,24 @@ Release — только `127.0.0.1` (перед ним ставится reverse
 
 ### Свой релей
 
-См. [deploy/README.md](deploy/README.md): unit systemd, пример nginx и скрипт
-деплоя одной командой. Затем укажите адрес своего релея в приложениях на
-часах и телефоне.
+Для максимальной приватности публичному релею можно вообще не доверять.
+
+**На своём компьютере (домашняя сеть):**
+
+1. Установите .NET 10 SDK, склонируйте репозиторий и выполните `dotnet run`
+   в папке `WristOTP.Server/`. Debug-сборка слушает все интерфейсы, порт 8443.
+2. Узнайте локальный IP компьютера (например `192.168.1.20`) и разрешите в
+   брандмауэре входящие подключения на порт 8443.
+3. На часах: **Settings → Relay server** → `http://192.168.1.20:8443` →
+   *Test connection* → *Save*. В приложении на телефоне: **Settings** → тот же
+   адрес.
+4. Во время синхронизации часы, телефон и компьютер должны быть в одной
+   сети Wi-Fi. Обычный `http://` здесь допустим: данные и так зашифрованы
+   сквозным шифрованием.
+
+**На сервере с доменом и HTTPS:** см. [deploy/README.md](deploy/README.md)
+(unit systemd, пример nginx, скрипт деплоя одной командой), затем укажите
+`https://ваш-домен` в обоих приложениях.
 
 ### Настройки
 
