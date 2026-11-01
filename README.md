@@ -63,7 +63,8 @@ phone apps.
   policy page app stores ask for). Empty → the repository link is shown.
 
 If you run your own relay, review `wwwroot/privacy.html` so that it matches
-how you operate it (logs, retention, hosting).
+how you operate it (logs, retention, hosting). The published policy says no
+request log is kept — `deploy/nginx.conf.example` is configured that way.
 
 ## Русский
 
@@ -121,4 +122,5 @@ Release — только `127.0.0.1` (перед ним ставится reverse
 
 Если вы разворачиваете свой релей, проверьте `wwwroot/privacy.html` — она
 должна соответствовать тому, как работает ваш сервер (журналы, сроки
-хранения, хостинг).
+хранения, хостинг). В опубликованной политике сказано, что журнал запросов
+не ведётся, — `deploy/nginx.conf.example` настроен именно так.

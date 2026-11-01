@@ -6,10 +6,10 @@
 # Замените relay.example.com на свой домен, а ssl_certificate* — на пути к
 # своему сертификату (например, выпущенному certbot / Let's Encrypt).
 
-# Access log with truncated client IPs (last IPv4 octet / IPv6 tail zeroed)
-# and no Referer — matches the privacy policy served at /privacy.
-# Журнал доступа с урезанным IP (последний октет IPv4 / хвост IPv6 обнуляются)
-# и без Referer — соответствует политике конфиденциальности на /privacy.
+# No request log is kept (privacy policy at /privacy, section 4). For temporary
+# troubleshooting, switch access_log to the anonymized format below.
+# Журнал запросов не ведётся (политика конфиденциальности на /privacy, п.4).
+# Для временной отладки переключите access_log на обезличенный формат ниже.
 map $remote_addr $wristotp_anon_ip {
     ~(?P<ip>\d+\.\d+\.\d+)\.\d+    $ip.0;
     ~(?P<ip>[^:]+:[^:]+:[^:]+):         $ip::;
@@ -20,6 +20,11 @@ log_format wristotp_anon '$wristotp_anon_ip - - [$time_local] "$request" $status
 server {
     listen 80;
     server_name relay.example.com;
+
+    # Otherwise these requests would go to the server-wide access log.
+    # Иначе эти запросы попали бы в общий журнал доступа сервера.
+    access_log off;
+    error_log  /var/log/nginx/wristotp.error.log crit;
 
     # Keep ACME HTTP-01 challenges reachable for certificate renewal.
     # Оставляет доступными проверки ACME HTTP-01 для продления сертификата.
@@ -44,8 +49,11 @@ server {
     ssl_session_cache shared:SSL:10m;
     ssl_session_timeout 10m;
 
-    access_log /var/log/nginx/wristotp.access.log wristotp_anon;
-    error_log  /var/log/nginx/wristotp.error.log warn;
+    # access_log /var/log/nginx/wristotp.access.log wristotp_anon;  # troubleshooting only / только для отладки
+    access_log off;
+    # warn/error entries contain client IPs; keep only nginx's own critical errors.
+    # В записях warn/error есть IP клиентов; оставляем только критические ошибки nginx.
+    error_log  /var/log/nginx/wristotp.error.log crit;
 
     # The server itself rejects payloads over 10 KB (413); this limit is
     # larger on purpose so the response comes from the app, not nginx.

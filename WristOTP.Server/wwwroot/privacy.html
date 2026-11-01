@@ -80,10 +80,10 @@
       <li>There are no user accounts, profiles, backups or databases on the server.</li>
     </ul>
 
-    <h2>4. Technical data (logs)</h2>
+    <h2>4. Technical data (no logs)</h2>
     <ul>
-      <li>To limit abuse, the server temporarily keeps the IP address of each request in memory for about one minute (rate limiting). It is not stored.</li>
-      <li>The web server keeps an access log for security and troubleshooting: a <strong>truncated IP address</strong> (the last part is removed, e.g. <code>203.0.113.0</code>), the time, the requested address, the response status and the browser/app name. These logs are kept for up to <strong>52 days</strong> and then deleted automatically. They are never shared or used to identify anyone.</li>
+      <li><strong>No request log is kept.</strong> The server does not record IP addresses, times or contents of requests to its disk.</li>
+      <li>To limit abuse, the server keeps the IP address of each request in memory for about one minute (rate limiting); it is never written to disk.</li>
       <li>The landing page shows anonymous counters only (how many items are waiting, total sent and received).</li>
     </ul>
 
@@ -147,10 +147,10 @@
       <li>На сервере нет учётных записей, профилей, резервных копий и баз данных.</li>
     </ul>
 
-    <h2>4. Технические данные (журналы)</h2>
+    <h2>4. Технические данные (журналы не ведутся)</h2>
     <ul>
-      <li>Для защиты от злоупотреблений сервер около минуты держит в памяти IP-адрес запроса (ограничение частоты запросов). На диск он не записывается.</li>
-      <li>Веб-сервер ведёт журнал доступа для безопасности и диагностики: <strong>урезанный IP-адрес</strong> (последняя часть удалена, например <code>203.0.113.0</code>), время, запрошенный адрес, код ответа и название браузера/приложения. Журналы хранятся до <strong>52 дней</strong> и затем удаляются автоматически. Они никому не передаются и не используются для установления личности.</li>
+      <li><strong>Журнал запросов не ведётся.</strong> Сервер не записывает на диск IP-адреса, время и содержимое запросов.</li>
+      <li>Для защиты от злоупотреблений сервер около минуты держит в памяти IP-адрес запроса (ограничение частоты запросов); на диск он никогда не записывается.</li>
       <li>Стартовая страница показывает только анонимные счётчики (сколько записей ожидает, сколько всего отправлено и получено).</li>
     </ul>
 
