@@ -1,0 +1,57 @@
+# Example nginx reverse proxy for the WristOTP relay.
+# Replace relay.example.com with your domain and point ssl_certificate*
+# to your certificate (e.g. issued by certbot / Let's Encrypt).
+#
+# Пример reverse proxy nginx для релея WristOTP.
+# Замените relay.example.com на свой домен, а ssl_certificate* — на пути к
+# своему сертификату (например, выпущенному certbot / Let's Encrypt).
+
+server {
+    listen 80;
+    server_name relay.example.com;
+
+    # Keep ACME HTTP-01 challenges reachable for certificate renewal.
+    # Оставляет доступными проверки ACME HTTP-01 для продления сертификата.
+    location /.well-known/acme-challenge/ {
+        root /var/www/letsencrypt;
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    http2 on;
+    server_name relay.example.com;
+
+    ssl_certificate     /etc/letsencrypt/live/relay.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/relay.example.com/privkey.pem;
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 10m;
+
+    access_log /var/log/nginx/wristotp.access.log;
+    error_log  /var/log/nginx/wristotp.error.log warn;
+
+    # The server itself rejects payloads over 10 KB (413); this limit is
+    # larger on purpose so the response comes from the app, not nginx.
+    # Сервер сам отклоняет пакеты больше 10 КБ (413); здесь лимит намеренно
+    # больше, чтобы ответ давало приложение, а не nginx.
+    client_max_body_size 64k;
+
+    location / {
+        proxy_pass http://127.0.0.1:8443;
+        proxy_http_version 1.1;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        # Overwrite (not append) so a client cannot spoof its IP; the app
+        # uses it for per-IP rate limiting.
+        # Перезаписываем (а не дописываем), чтобы клиент не мог подменить
+        # свой IP; приложение использует его для лимита запросов по IP.
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

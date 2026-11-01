@@ -1,0 +1,25 @@
+# systemd unit for the WristOTP relay (self-contained linux-x64 build in
+# /opt/wristotp-server/current, see deploy/README.md).
+# Unit systemd для релея WristOTP (self-contained сборка linux-x64 в
+# /opt/wristotp-server/current, см. deploy/README.md).
+[Unit]
+Description=WristOTP relay server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=wristotp
+Group=wristotp
+WorkingDirectory=/opt/wristotp-server/current
+ExecStart=/opt/wristotp-server/current/WristOTP.Server
+Environment=ASPNETCORE_ENVIRONMENT=Production
+Environment=DOTNET_NOLOGO=1
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

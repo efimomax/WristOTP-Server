@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WristOTP Relay</title>
+<style>
+  /*
+    The palette matches the WristOTP watch and phone apps (#3399FF on
+    black). Both apps are dark-only, and this page follows that on purpose —
+    there is no @media (prefers-color-scheme) by design.
+
+    Палитра совпадает с приложениями WristOTP для часов и телефона (#3399FF
+    на чёрном). Оба приложения только в тёмной теме, и страница следует
+    этому намеренно — @media (prefers-color-scheme) нет сознательно.
+  */
+  :root{
+    --bg:#000000;
+    --surface:#111114;
+    --surface-alt:#0B0B0D;
+    --border:#232328;
+    --border-soft:#1A1A1E;
+    --text:#FFFFFF;
+    --text-secondary:#9A9AA2;
+    --text-muted:#5C5C64;
+    --accent:#3399FF;
+    --accent-soft:#14294A;
+    --danger:#FF6161;
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.5;
+    min-height:100vh;
+    overflow-x:hidden;
+    position:relative;
+  }
+  a{color:inherit}
+
+  /* Slow-drifting glow blobs behind everything — ambient "it's alive"
+     motion that costs zero extra server calls.
+     Медленно плывущие светящиеся пятна на фоне — "живое" движение, не
+     требующее ни одного лишнего запроса к серверу. */
+  .glow{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+  .glow i{
+    position:absolute;width:52vmax;height:52vmax;border-radius:50%;
+    background:radial-gradient(circle, var(--accent-soft) 0%, transparent 68%);
+    filter:blur(10px);opacity:.55;
+  }
+  .glow i:nth-child(1){top:-22vmax;left:-14vmax;animation:drift1 22s ease-in-out infinite alternate}
+  .glow i:nth-child(2){bottom:-26vmax;right:-16vmax;animation:drift2 26s ease-in-out infinite alternate}
+  @keyframes drift1{
+    0%{transform:translate(0,0) scale(1)}
+    100%{transform:translate(6vmax,4vmax) scale(1.12)}
+  }
+  @keyframes drift2{
+    0%{transform:translate(0,0) scale(1)}
+    100%{transform:translate(-5vmax,-3vmax) scale(1.08)}
+  }
+
+  .wrap{max-width:920px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+  section{padding:64px 0}
+
+  .reveal{opacity:0;transform:translateY(22px);transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1)}
+  .reveal.in{opacity:1;transform:none}
+  .stagger.in > *{opacity:1;transform:none}
+  .stagger > *{opacity:0;transform:translateY(16px) scale(.97);transition:opacity .6s ease, transform .6s ease}
+  .stagger > *:nth-child(1){transition-delay:.02s}
+  .stagger > *:nth-child(2){transition-delay:.12s}
+  .stagger > *:nth-child(3){transition-delay:.22s}
+  .stagger > *:nth-child(4){transition-delay:.32s}
+
+  /* ---- hero ---- */
+  .hero{padding:72px 0 48px;text-align:center}
+  .brand{
+    display:inline-flex;align-items:center;gap:10px;
+    font-size:14px;color:var(--text-secondary);letter-spacing:.14em;text-transform:uppercase;
+    margin-bottom:18px;
+  }
+  .dot-wrap{position:relative;width:10px;height:10px}
+  .dot{
+    position:absolute;inset:0;border-radius:50%;background:var(--accent);
+  }
+  .dot-ring{
+    position:absolute;inset:-6px;border-radius:50%;border:1.5px solid var(--accent);
+    animation:ring 2.4s cubic-bezier(.2,.7,.3,1) infinite;
+  }
+  @keyframes ring{
+    0%{transform:scale(.35);opacity:.9}
+    100%{transform:scale(1.9);opacity:0}
+  }
+  h1{
+    font-size:clamp(2.2rem,5vw,3.4rem);
+    margin:0 0 12px;
+    letter-spacing:-0.02em;
+    background:linear-gradient(120deg, #fff 20%, var(--accent) 55%, #fff 80%);
+    background-size:220% 100%;
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    animation:sheen 7s linear infinite;
+  }
+  @keyframes sheen{
+    0%{background-position:0% 0}
+    100%{background-position:-220% 0}
+  }
+  .tagline{color:var(--text-secondary);font-size:1.08rem;max-width:560px;margin:0 auto}
+  .platform-pill{
+    display:inline-flex;align-items:center;gap:10px;margin-top:20px;
+    background:var(--surface);border:1px solid var(--border);border-radius:999px;
+    padding:9px 20px 9px 10px;font-size:.94rem;color:var(--text-secondary);
+    transition:border-color .3s ease, transform .3s ease;
+  }
+  .platform-pill:hover{border-color:var(--accent);transform:translateY(-1px)}
+  .platform-pill img{width:28px;height:28px;border-radius:8px;display:block}
+
+  /* ---- stat cards ---- */
+  .stats{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+    margin-top:44px;
+  }
+  @media (max-width:720px){.stats{grid-template-columns:repeat(2,1fr)}}
+  .stat{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:20px 16px;text-align:center;
+    transition:transform .3s cubic-bezier(.2,.7,.2,1), border-color .3s ease, box-shadow .3s ease;
+  }
+  .stat:hover{
+    transform:translateY(-4px);
+    border-color:var(--accent);
+    box-shadow:0 10px 30px -12px rgba(51,153,255,.35);
+  }
+  .stat .n{font-size:1.9rem;font-weight:700;font-variant-numeric:tabular-nums;color:var(--accent);transition:text-shadow .3s ease}
+  .stat .n.flash{text-shadow:0 0 18px rgba(51,153,255,.85)}
+  .stat .l{font-size:.78rem;color:var(--text-secondary);margin-top:4px;text-transform:uppercase;letter-spacing:.06em}
+
+  /* Live activity strip: exactly 60 seconds wide (= the cache entry TTL,
+     RelayStore.Ttl), 12 columns of 5 s. A column enters on the right and
+     leaves on the left after 60 s: .pulse-track slides left continuously via
+     rAF and snaps back to 0 when the server's bucket changes (seamless,
+     because the new rightmost column is already drawn in that spot).
+
+     Живая шкала активности: ровно 60 секунд в ширину (= TTL записи в кэше,
+     RelayStore.Ttl), 12 столбиков по 5 с. Столбик появляется справа и
+     уходит влево через 60 с: .pulse-track непрерывно едет влево через rAF и
+     возвращается в 0 при смене бакета на сервере (бесшовно — новый крайний
+     столбик уже нарисован на этом месте). */
+  .pulse-caption{
+    margin-top:26px;font-size:.72rem;color:var(--text-muted);
+    text-transform:uppercase;letter-spacing:.08em;text-align:center;
+  }
+  .pulse-wrap{
+    margin-top:8px;height:52px;overflow:hidden;position:relative;
+  }
+  .pulse-axis{
+    display:flex;justify-content:space-between;
+    font-size:.66rem;color:var(--text-muted);margin-top:2px;padding:0 2px;
+  }
+  .pulse-track{display:flex;height:100%;will-change:transform}
+  .pulse-col{
+    flex:0 0 auto;display:flex;flex-direction:column;
+    align-items:center;justify-content:flex-end;height:100%;padding:0 3px;
+  }
+  .pulse-bar-box{width:100%;height:34px;display:flex;align-items:flex-end;justify-content:center}
+  .pulse-bar{
+    width:70%;min-height:3px;border-radius:2px 2px 0 0;
+    background:var(--accent-soft);
+    transition:height .35s cubic-bezier(.2,.7,.2,1), background .35s ease;
+    animation:idle-breathe 2.6s ease-in-out infinite;
+  }
+  .pulse-bar.hit{background:var(--accent);animation:none}
+  @keyframes idle-breathe{
+    0%,100%{opacity:.55}
+    50%{opacity:1}
+  }
+  .pulse-num{
+    font-size:.64rem;color:var(--text-muted);margin-top:4px;
+    font-variant-numeric:tabular-nums;transition:color .3s ease;
+  }
+  .pulse-num.hit{color:var(--accent);font-weight:700}
+
+  /* ---- section headers ---- */
+  .kicker{color:var(--accent);font-size:.8rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin:0 0 8px}
+  h2{font-size:1.7rem;margin:0 0 8px}
+  .sub{color:var(--text-secondary);max-width:640px;margin:0 0 32px}
+
+  /* ---- security ---- */
+  .sec-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+  @media (max-width:760px){.sec-grid{grid-template-columns:1fr}}
+  .card{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:24px;
+    transition:border-color .3s ease, transform .3s ease;
+  }
+  .card:hover{border-color:var(--border-soft);transform:translateY(-2px)}
+  .card h3{margin:0 0 10px;font-size:1.05rem;display:flex;align-items:center;gap:8px}
+  .card p{color:var(--text-secondary);margin:0 0 10px;font-size:.94rem}
+  .card ul{margin:0;padding-left:18px;color:var(--text-secondary);font-size:.92rem}
+  .card li{margin-bottom:6px}
+  .card code{
+    background:var(--accent-soft);
+    color:var(--accent);padding:1px 6px;border-radius:5px;font-size:.85em;
+  }
+
+  /* ---- how it works ---- */
+  .flow{
+    display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-top:8px;
+  }
+  @media (max-width:860px){.flow{grid-template-columns:repeat(3,1fr)}}
+  @media (max-width:560px){.flow{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:400px){.flow{grid-template-columns:1fr}}
+  .step{
+    background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);
+    padding:18px;display:flex;flex-direction:column;gap:12px;
+    transition:border-color .3s ease, transform .3s ease;
+  }
+  .step:hover{border-color:var(--accent);transform:translateY(-3px)}
+  .shot{
+    aspect-ratio:1/1;border-radius:12px;position:relative;overflow:hidden;
+    border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;
+    background:var(--surface-alt);
+    cursor:pointer;
+    transition:border-color .25s ease, transform .25s ease;
+  }
+  .shot:hover, .shot:focus-visible{border-color:var(--accent);transform:translateY(-2px);outline:none}
+  .shot svg{width:48px;height:48px;color:var(--accent);position:relative;z-index:1}
+  .shot-hint{
+    position:absolute;left:0;right:0;bottom:0;z-index:2;
+    padding:6px 0;font-size:.62rem;font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+    text-align:center;color:var(--accent);
+    background:linear-gradient(0deg, var(--surface-alt) 45%, transparent);
+    opacity:0;transform:translateY(6px);
+    transition:opacity .2s ease, transform .2s ease;
+  }
+  .shot:hover .shot-hint, .shot:focus-visible .shot-hint{opacity:1;transform:translateY(0)}
+
+  /* Screenshot lightbox, opened by clicking a .shot. If a
+     screenshot_N.png is missing, the <img> gets a 404 and onerror shows
+     .lightbox-fallback instead of a broken image.
+     Лайтбокс со скриншотом, открывается кликом по .shot. Если файла
+     screenshot_N.png нет, <img> получает 404 и onerror показывает
+     .lightbox-fallback вместо сломанной картинки. */
+  .lightbox[hidden]{display:none}
+  .lightbox{
+    position:fixed;inset:0;z-index:50;
+    background:rgba(0,0,0,.82);
+    display:flex;align-items:center;justify-content:center;padding:32px;
+    animation:lightbox-in .2s ease;
+  }
+  @keyframes lightbox-in{from{opacity:0}to{opacity:1}}
+  .lightbox-inner{max-width:min(90vw,380px);max-height:85vh;position:relative}
+  .lightbox-inner img{width:100%;height:auto;border-radius:16px;display:block;box-shadow:0 24px 64px -16px rgba(0,0,0,.7)}
+  .lightbox-fallback{
+    background:var(--surface);border:1px solid var(--border);border-radius:16px;
+    padding:48px 28px;text-align:center;color:var(--text-secondary);font-size:.9rem;min-width:260px;
+  }
+  .lightbox-close{
+    position:absolute;top:-14px;right:-14px;width:36px;height:36px;border-radius:50%;
+    background:var(--surface);border:1px solid var(--border);color:var(--text);
+    font-size:1.3rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;
+    transition:border-color .2s ease, color .2s ease;
+  }
+  .lightbox-close:hover{border-color:var(--accent);color:var(--accent)}
+  .scan-line{
+    position:absolute;left:8%;right:8%;height:2px;border-radius:2px;
+    background:linear-gradient(90deg, transparent, var(--accent), transparent);
+    box-shadow:0 0 10px 1px rgba(51,153,255,.7);
+    animation:scan 2.6s ease-in-out infinite;
+  }
+  @keyframes scan{
+    0%{top:12%;opacity:0}
+    10%{opacity:1}
+    50%{top:88%}
+    90%{opacity:1}
+    100%{top:88%;opacity:0}
+  }
+  .step h4{margin:0;font-size:.98rem}
+  .step p{margin:0;color:var(--text-secondary);font-size:.86rem}
+  .step .n{
+    width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;
+    font-weight:700;font-size:.82rem;display:flex;align-items:center;justify-content:center;
+  }
+
+  /* ---- app links ---- */
+  .app-card{display:flex;flex-direction:column}
+  .app-group-head{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+  .app-logo{width:44px;height:44px;border-radius:12px;display:block;flex:0 0 auto}
+  .app-logo--generic{
+    background:var(--surface-alt);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;font-size:1.3rem;
+  }
+  .app-group-head h3{margin:0;font-size:1rem}
+  .app-group-head p{margin:2px 0 0;color:var(--text-secondary);font-size:.82rem}
+  .app-desc{color:var(--text-secondary);font-size:.88rem;margin:0 0 16px;flex:1}
+  .badges{display:flex;gap:16px;flex-wrap:wrap;margin-top:auto}
+  .badge{
+    position:relative;display:inline-flex;align-items:center;gap:10px;overflow:hidden;
+    background:var(--surface);color:#fff;border:1px solid var(--border);border-radius:12px;
+    padding:10px 18px 10px 14px;text-decoration:none;
+    transition:transform .25s cubic-bezier(.2,.7,.2,1), border-color .25s ease, box-shadow .25s ease;
+  }
+  .badge:hover{
+    transform:translateY(-2px);
+    border-color:var(--accent);
+    box-shadow:0 10px 26px -12px rgba(51,153,255,.4);
+  }
+  .badge::after{
+    content:"";position:absolute;inset:0;
+    background:linear-gradient(115deg, transparent 30%, rgba(255,255,255,.14) 45%, transparent 60%);
+    background-size:250% 100%;background-position:150% 0;
+    transition:background-position .7s ease;
+    pointer-events:none;
+  }
+  .badge:hover::after{background-position:-50% 0}
+  .badge svg{width:26px;height:26px;flex:0 0 auto}
+  .badge .t{display:flex;flex-direction:column;line-height:1.15}
+  .badge .t small{font-size:.62rem;opacity:.75;text-transform:uppercase;letter-spacing:.04em}
+  .badge .t strong{font-size:1rem}
+  .soon{
+    position:absolute;top:-9px;right:-9px;background:var(--accent);color:#fff;
+    font-size:.62rem;font-weight:700;padding:3px 7px;border-radius:999px;letter-spacing:.03em;
+    animation:soon-pulse 2.4s ease-in-out infinite;
+  }
+  @keyframes soon-pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(51,153,255,.5)}
+    50%{box-shadow:0 0 0 5px rgba(51,153,255,0)}
+  }
+
+  /* "Open source" card: link to the source repository so anyone can
+     verify the code or run their own relay. Hidden until /api/v1/config
+     returns a repository URL.
+     Карточка "Open source": ссылка на репозиторий, чтобы любой мог
+     проверить код или развернуть свой релей. Скрыта, пока /api/v1/config
+     не вернёт адрес репозитория. */
+  .oss-section[hidden]{display:none}
+  .oss{display:flex;align-items:center;gap:18px;flex-wrap:wrap}
+  .oss svg.gh{width:40px;height:40px;flex:0 0 auto;color:var(--text)}
+  .oss .oss-text{flex:1;min-width:220px}
+  .oss .oss-text h3{margin:0 0 4px;font-size:1rem}
+  .oss .oss-text p{margin:0;color:var(--text-secondary);font-size:.88rem}
+  .oss-btn{
+    display:inline-flex;align-items:center;gap:8px;text-decoration:none;
+    background:var(--accent);color:#fff;font-weight:600;font-size:.9rem;
+    padding:11px 20px;border-radius:999px;
+    transition:transform .25s ease, box-shadow .25s ease;
+  }
+  .oss-btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px -12px rgba(51,153,255,.6)}
+
+  footer{padding:32px 0 60px;text-align:center;color:var(--text-secondary);font-size:.82rem}
+  footer a{color:var(--accent);text-decoration:none}
+  footer a:hover{text-decoration:underline}
+  .copyright{margin-top:14px;color:var(--text-muted);font-size:.76rem}
+  .copyright a{margin-left:6px}
+
+  /* Shown only when GET /api/v1/stats reports isDebugBuild:true, i.e. only
+     in the build where /debug exists (Program.cs, #if DEBUG). In Release the
+     button always stays [hidden].
+     Показывается, только если GET /api/v1/stats вернул isDebugBuild:true, то
+     есть только в сборке, где есть /debug (Program.cs, #if DEBUG). В Release
+     кнопка всегда остаётся [hidden]. */
+  .debug-btn[hidden]{display:none}
+  .debug-btn{
+    position:fixed;right:18px;bottom:18px;z-index:5;
+    display:inline-flex;align-items:center;gap:6px;
+    background:var(--surface);border:1px solid var(--border);
+    color:var(--text-secondary);text-decoration:none;
+    padding:9px 16px;border-radius:999px;font-size:.8rem;
+    box-shadow:0 6px 20px -8px rgba(0,0,0,.6);
+    transition:border-color .25s ease, transform .25s ease, color .25s ease;
+  }
+  .debug-btn:hover{border-color:var(--accent);color:var(--accent);transform:translateY(-2px)}
+  .debug-btn svg{width:14px;height:14px}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+  }
+</style>
+</head>
+<body>
+
+<div class="glow" aria-hidden="true"><i></i><i></i></div>
+
+<div class="wrap">
+
+  <div class="hero reveal">
+    <div class="brand"><span class="dot-wrap"><span class="dot"></span><span class="dot-ring"></span></span> WristOTP Relay</div>
+    <h1>A dead-drop for your two-factor codes</h1>
+    <p class="tagline">A tiny, ephemeral relay that hands an encrypted account off from your phone to your watch — and forgets it existed within a minute.</p>
+
+    <div class="platform-pill">
+      <img src="/images/wristotp-watch-logo.png" alt="" width="28" height="28">
+      <span>Built for Huawei Watch · HarmonyOS</span>
+    </div>
+
+    <div class="stats stagger">
+      <div class="stat"><div class="n" id="stat-active">–</div><div class="l">Waiting to be picked up</div></div>
+      <div class="stat"><div class="n" id="stat-put">–</div><div class="l">Total received</div></div>
+      <div class="stat"><div class="n" id="stat-claimed">–</div><div class="l">Total picked up</div></div>
+      <div class="stat"><div class="n" id="stat-uptime">–</div><div class="l">Uptime</div></div>
+    </div>
+
+    <div class="pulse-caption">Requests received · number per 5s, last 60 seconds</div>
+    <div class="pulse-wrap" id="pulse-wrap" aria-hidden="true">
+      <div class="pulse-track" id="pulse-track"></div>
+    </div>
+    <div class="pulse-axis" aria-hidden="true"><span>60s ago</span><span>now</span></div>
+  </div>
+
+  <section class="reveal">
+    <div class="kicker">Security</div>
+    <h2>Yes, it's actually safe</h2>
+    <p class="sub">The short version: this server never sees your account name, your secret key, or your codes. It only ever holds a locked box it can't open, for at most 60 seconds.</p>
+    <div class="sec-grid">
+      <div class="card">
+        <h3>🔒 In plain words</h3>
+        <p>Your phone locks your account data in a box before it ever leaves the phone. The box is sent here, your watch picks it up, and the watch is the only other device with the key to open it.</p>
+        <p>The box disappears the instant your watch grabs it — or after one minute, whichever happens first. Nothing is written to disk. Nothing is backed up. There is no database.</p>
+      </div>
+      <div class="card">
+        <h3>🛠️ In technical words</h3>
+        <ul>
+          <li>Phone and watch each derive the same one-time key from your watch's device ID and a short sync code, via <code>HKDF-SHA256</code> — the server never sees either input.</li>
+          <li>The payload is sealed with <code>AES-256-GCM</code> before it's uploaded. This server stores only ciphertext, an IV, and an auth tag — opaque bytes it cannot decrypt.</li>
+          <li>Storage is in-memory only (<code>IMemoryCache</code>), keyed by a derived lookup ID. TTL: <strong>60 seconds</strong>, one-time read — a successful fetch deletes the entry immediately, TTL or not.</li>
+          <li>No logs, no persistence layer, no account database exists in this service at all — there is nothing to breach.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="kicker">How it works</div>
+    <h2>Five taps, end to end</h2>
+    <p class="sub">Only one moment along this chain ever leaves your two devices — a sealed, unreadable box that lives on this relay for at most 60 seconds.</p>
+    <div class="flow">
+      <div class="step">
+        <div class="n">1</div>
+        <div class="shot" data-screenshot="/images/screenshots/screenshot_1.png" role="button" tabindex="0" aria-label="View screenshot: Add the account">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/>
+            <rect x="15" y="15" width="2.4" height="2.4" rx=".4"/><rect x="19.6" y="15" width="2.4" height="2.4" rx=".4"/><rect x="15" y="19.6" width="2.4" height="2.4" rx=".4"/>
+            <path d="M12 3v4M12 10.5v1M9 12h2M15 12h2.6M12 15v2M12 20.4v.6"/>
+          </svg>
+          <span class="shot-hint">View screenshot</span>
+        </div>
+        <h4>Add the account</h4>
+        <p>Scan its QR code in the Companion app, or type the secret in by hand.</p>
+      </div>
+      <div class="step">
+        <div class="n">2</div>
+        <div class="shot" data-screenshot="/images/screenshots/screenshot_2.png" role="button" tabindex="0" aria-label="View screenshot: Point it at your watch">
+          <div class="scan-line"></div>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="7" y="4" width="10" height="16" rx="3"/><path d="M9 2h6v3H9zM9 19h6v3H9z"/><rect x="9.5" y="9.5" width="5" height="5" rx=".6"/>
+          </svg>
+          <span class="shot-hint">View screenshot</span>
+        </div>
+        <h4>Point it at your watch</h4>
+        <p>Scan the watch's QR code — or reuse an ID you already scanned before.</p>
+      </div>
+      <div class="step">
+        <div class="n">3</div>
+        <div class="shot" data-screenshot="/images/screenshots/screenshot_3.png" role="button" tabindex="0" aria-label="View screenshot: Get your one-time code">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"/><path d="M6 12h.01M8.4 12h.01M10.8 12h.01M13.2 12h.01M15.6 12h.01M18 12h.01" stroke-width="2.4"/>
+          </svg>
+          <span class="shot-hint">View screenshot</span>
+        </div>
+        <h4>Get your one-time code</h4>
+        <p>The app shows a short sync code right on your phone screen.</p>
+      </div>
+      <div class="step">
+        <div class="n">4</div>
+        <div class="shot" data-screenshot="/images/screenshots/screenshot_4.png" role="button" tabindex="0" aria-label="View screenshot: Type it into the watch">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="7" y="4" width="10" height="16" rx="3"/><path d="M9 11h.01M12 11h.01M15 11h.01M9 14h.01M12 14h.01M15 14h.01" stroke-width="2.4"/>
+          </svg>
+          <span class="shot-hint">View screenshot</span>
+        </div>
+        <h4>Type it into the watch</h4>
+        <p>Enter that same code on the watch's on-screen keypad.</p>
+      </div>
+      <div class="step">
+        <div class="n">5</div>
+        <div class="shot" data-screenshot="/images/screenshots/screenshot_5.png" role="button" tabindex="0" aria-label="View screenshot: Codes appear on your watch">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="7" y="4" width="10" height="16" rx="3"/><path d="M8 12h.01M9.6 12h.01M11.2 12h.01M12.8 12h.01M14.4 12h.01M16 12h.01" stroke-width="2"/>
+          </svg>
+          <span class="shot-hint">View screenshot</span>
+        </div>
+        <h4>Codes appear on your watch</h4>
+        <p>The watch fetches the account and starts generating codes right there.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="kicker">Get the apps</div>
+    <h2>Two small apps, one account</h2>
+    <p class="sub">They're not the same app — one lives on your wrist, the other sets it up.</p>
+
+    <div class="sec-grid">
+      <div class="card app-card">
+        <div class="app-group-head">
+          <img class="app-logo" src="/images/wristotp-watch-logo.png" alt="" width="44" height="44">
+          <div>
+            <h3>On your watch</h3>
+            <p>Huawei Watch · HarmonyOS</p>
+          </div>
+        </div>
+        <p class="app-desc">The app that actually generates your codes — offline, once an account has been sent to it.</p>
+        <div class="badges">
+          <a class="badge" href="#" aria-disabled="true">
+            <span class="soon">Coming soon</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="4"/><path d="M12 8v7M9 12l3 3 3-3"/></svg>
+            <span class="t"><small>Explore it on</small><strong>AppGallery</strong></span>
+          </a>
+        </div>
+      </div>
+
+      <div class="card app-card">
+        <div class="app-group-head">
+          <div class="app-logo app-logo--generic">📱</div>
+          <div>
+            <h3>On your phone</h3>
+            <p>Companion app · iOS &amp; Android</p>
+          </div>
+        </div>
+        <p class="app-desc">How accounts get onto the watch in the first place — scan a QR code, type a secret in, or import from another authenticator.</p>
+        <div class="badges">
+          <a class="badge" href="#" aria-disabled="true">
+            <span class="soon">Coming soon</span>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.365 1.43c0 1.14-.462 2.245-1.196 3.045-.8.86-2.107 1.53-3.19 1.44-.135-1.11.42-2.28 1.15-3.03.8-.85 2.19-1.48 3.236-1.455zM20.62 17.02c-.44 1.02-.97 2.02-1.62 2.95-.9 1.28-1.84 2.55-3.31 2.58-1.45.03-1.92-.86-3.58-.86-1.66 0-2.18.83-3.55.89-1.42.06-2.5-1.38-3.4-2.65-1.85-2.6-3.27-7.35-1.37-10.56.94-1.6 2.63-2.6 4.46-2.63 1.4-.03 2.72.93 3.58.93.85 0 2.46-1.15 4.15-.98.71.03 2.7.28 3.98 2.14-.1.06-2.38 1.36-2.35 4.07.02 3.23 2.86 4.31 2.9 4.33-.02.07-.44 1.46-1.42 2.83z"/></svg>
+            <span class="t"><small>Download on the</small><strong>App Store</strong></span>
+          </a>
+          <a class="badge" href="#" aria-disabled="true">
+            <span class="soon">Coming soon</span>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.6 2.2c-.35.2-.6.6-.6 1.1v17.4c0 .5.25.9.6 1.1l9.8-9.8-9.8-9.8z"/><path d="M15.9 10.5l2.7-1.55c.6-.35.6-1.2 0-1.55L15.9 5.85 13.4 8.3l2.5 2.2z" opacity=".75"/><path d="M3.9 21.4c.25.1.55.05.8-.1l11.4-6.55-2.6-2.6L3.9 21.4z" opacity=".9"/><path d="M3.9 2.6l9.6 9.6 2.6-2.6L4.7 2.5c-.25-.15-.55-.2-.8-.1z" opacity=".9"/></svg>
+            <span class="t"><small>GET IT ON</small><strong>Google Play</strong></span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal oss-section" id="oss" hidden>
+    <div class="kicker">Open source</div>
+    <h2>Don&#39;t trust it — check it</h2>
+    <div class="card oss">
+      <svg class="gh" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.18 1.83 1.18 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
+      <div class="oss-text">
+        <h3>The relay is open source</h3>
+        <p>You can verify the code yourself — or deploy your own relay and point the apps at it.</p>
+      </div>
+      <a class="oss-btn" href="#" id="oss-link" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+    </div>
+  </section>
+
+  <footer>
+    Nothing above identifies a device, an account, or a person — only counts. ·
+    Relay online since <span id="footer-since">–</span>
+    <div class="copyright">
+      WristOTP · 2026
+      <a href="#" id="github-link" target="_blank" rel="noopener noreferrer" hidden>GitHub</a>
+    </div>
+  </footer>
+
+</div>
+
+<a href="/debug" class="debug-btn" id="debug-btn" hidden>
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9l-3 3 3 3M15 9l3 3-3 3M13 7l-2 10"/></svg>
+  Debug
+</a>
+
+<div class="lightbox" id="lightbox" hidden>
+  <button class="lightbox-close" id="lightbox-close" type="button" aria-label="Close">×</button>
+  <div class="lightbox-inner">
+    <img id="lightbox-img" alt="">
+    <div class="lightbox-fallback" id="lightbox-fallback" hidden>Screenshot not added yet — check back later.</div>
+  </div>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  function fmt(n){
+    if (n === null || n === undefined) return "–";
+    return new Intl.NumberFormat().format(n);
+  }
+
+  function animateNumber(el, to){
+    var from = parseInt(el.dataset.val || "0", 10) || 0;
+    if (from === to) return;
+    el.dataset.val = to;
+    var start = performance.now(), dur = 600;
+    function step(now){
+      var p = Math.min(1, (now - start) / dur);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = fmt(Math.round(from + (to - from) * eased));
+      if (p < 1) { requestAnimationFrame(step); }
+      else {
+        el.classList.add("flash");
+        setTimeout(function(){ el.classList.remove("flash"); }, 500);
+      }
+    }
+    requestAnimationFrame(step);
+  }
+
+  function fmtUptime(startedAtIso){
+    var startedMs = new Date(startedAtIso).getTime();
+    var s = Math.max(0, Math.floor((Date.now() - startedMs) / 1000));
+    var d = Math.floor(s / 86400); s -= d * 86400;
+    var h = Math.floor(s / 3600); s -= h * 3600;
+    var m = Math.floor(s / 60); s -= m * 60;
+    if (d > 0) return d + "d " + h + "h";
+    if (h > 0) return h + "h " + m + "m";
+    if (m > 0) return m + "m " + s + "s";
+    return s + "s";
+  }
+
+  var startedAtIso = null;
+  var currentBucketIndex = null;
+  var POLL_MS = 1000;
+
+  // 12 columns x 5 s = exactly the 60-second window (the cache entry TTL).
+  // The history is computed on the SERVER (RelayStats.GetRecentBuckets), so
+  // it survives a reload and looks the same in every tab — the page only
+  // shows authoritative numbers.
+  // 12 столбиков x 5 с = ровно 60-секундное окно (TTL записи в кэше).
+  // История считается на СЕРВЕРЕ (RelayStats.GetRecentBuckets), поэтому
+  // переживает перезагрузку и одинакова во всех вкладках — страница лишь
+  // показывает авторитетные числа.
+  var BUCKET_MS = 5000;
+  var BUCKET_COUNT = 12;
+  var values = new Array(BUCKET_COUNT + 1).fill(0);
+  var track = document.getElementById("pulse-track");
+  var wrap = document.getElementById("pulse-wrap");
+  var lastTickAt = performance.now();
+
+  function slotWidth(){
+    return wrap.clientWidth / BUCKET_COUNT;
+  }
+
+  function renderColumns(){
+    var w = slotWidth();
+    var max = Math.max(1, Math.max.apply(null, values));
+    track.innerHTML = "";
+    values.forEach(function(v){
+      var col = document.createElement("div");
+      col.className = "pulse-col";
+      col.style.width = w + "px";
+
+      var box = document.createElement("div");
+      box.className = "pulse-bar-box";
+      var bar = document.createElement("div");
+      bar.className = "pulse-bar" + (v > 0 ? " hit" : "");
+      bar.style.height = Math.max(3, Math.round((v / max) * 34)) + "px";
+      box.appendChild(bar);
+
+      var num = document.createElement("div");
+      num.className = "pulse-num" + (v > 0 ? " hit" : "");
+      num.textContent = v;
+
+      col.appendChild(box);
+      col.appendChild(num);
+      track.appendChild(col);
+    });
+  }
+
+  // Resets the "conveyor" offset to the start of the current bucket. The new
+  // rightmost column is drawn exactly where translateX(-slotWidth) just was,
+  // so there is no visible jump. elapsedMs is how much of the bucket has
+  // already passed on the server, keeping the animation in step with it.
+  // Сброс сдвига "конвейера" в начало текущего бакета. Новый крайний столбик
+  // нарисован ровно там, где только что был translateX(-slotWidth), поэтому
+  // прыжка не видно. elapsedMs — сколько бакета уже прошло на сервере, чтобы
+  // анимация шла с ним в такт.
+  function resetSlide(elapsedMs){
+    track.style.transition = "none";
+    track.style.transform = "translateX(0px)";
+    void track.offsetWidth; // force reflow before removing transition:none / форсируем reflow
+    track.style.transition = "";
+    lastTickAt = performance.now() - (elapsedMs || 0);
+  }
+
+  function animateSlide(now){
+    var progress = Math.min(1, (now - lastTickAt) / BUCKET_MS);
+    track.style.transform = "translateX(" + (-progress * slotWidth()) + "px)";
+    requestAnimationFrame(animateSlide);
+  }
+
+  renderColumns();
+  requestAnimationFrame(animateSlide);
+  window.addEventListener("resize", renderColumns);
+
+  function tick(){
+    fetch("/api/v1/stats", {cache: "no-store"}).then(function(r){ return r.json(); }).then(function(s){
+      animateNumber(document.getElementById("stat-active"), s.activeCount);
+      animateNumber(document.getElementById("stat-put"), s.totalPut);
+      animateNumber(document.getElementById("stat-claimed"), s.totalClaimed);
+      startedAtIso = s.startedAtUtc;
+      document.getElementById("debug-btn").hidden = !s.isDebugBuild;
+
+      // Every poll replaces the WHOLE strip with the server's history.
+      // Appending only the latest (still open) bucket lost events that
+      // arrived in that bucket after the poll. Poll once a second; slide the
+      // strip only when the server's bucket changes.
+      // Каждый опрос заменяет ВСЮ ленту историей с сервера. Если дописывать
+      // только последний (ещё открытый) бакет, теряются события, пришедшие в
+      // него после опроса. Опрос раз в секунду, сдвиг ленты — только при
+      // смене бакета на сервере.
+      values = s.recentBuckets.concat([0]);
+      renderColumns();
+      if (s.bucketIndex !== currentBucketIndex) {
+        currentBucketIndex = s.bucketIndex;
+        resetSlide(s.bucketElapsedMs);
+      }
+    }).catch(function(){ /* server unreachable — leave last known values on screen */ });
+  }
+
+  function uptimeTick(){
+    if (!startedAtIso) return;
+    var el = document.getElementById("stat-uptime");
+    el.textContent = fmtUptime(startedAtIso);
+    document.getElementById("footer-since").textContent =
+      new Date(startedAtIso).toLocaleString();
+  }
+
+  tick();
+  setInterval(tick, POLL_MS);
+  setInterval(uptimeTick, 1000);
+
+  // Repository link comes from appsettings.json (Links:GithubRepoUrl), not
+  // hard-coded here — a self-hosted instance can point to its own fork.
+  // Fetched once on load: the value does not change while the server runs.
+  // Ссылка на репозиторий — из appsettings.json (Links:GithubRepoUrl), а не
+  // зашита здесь: свой экземпляр сервера может указать на свой форк.
+  // Берётся один раз при загрузке — во время работы не меняется.
+  fetch("/api/v1/config", {cache: "no-store"}).then(function(r){ return r.json(); }).then(function(c){
+    if (!c.githubRepoUrl) return;
+    var link = document.getElementById("github-link");
+    link.href = c.githubRepoUrl;
+    link.hidden = false;
+    document.getElementById("oss-link").href = c.githubRepoUrl;
+    var oss = document.getElementById("oss");
+    oss.hidden = false;
+    oss.classList.add("in");
+  }).catch(function(){ /* config unavailable — links stay hidden / конфиг недоступен — ссылки скрыты */ });
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){ if (e.isIntersecting) e.target.classList.add("in"); });
+  }, {threshold: .12});
+  document.querySelectorAll(".reveal").forEach(function(el){ io.observe(el); });
+
+  // Screenshot lightbox — opened by click (or Enter/Space) on any of the 5
+  // icons in "How it works". A missing screenshot_N.png gives a 404 and
+  // onerror shows .lightbox-fallback instead of a broken image.
+  // Лайтбокс со скриншотами — открывается кликом (или Enter/Space) по любой
+  // из 5 иконок в "How it works". Если файла screenshot_N.png нет, <img>
+  // получает 404 и onerror показывает .lightbox-fallback.
+  var lightbox = document.getElementById("lightbox");
+  var lightboxImg = document.getElementById("lightbox-img");
+  var lightboxFallback = document.getElementById("lightbox-fallback");
+  var lightboxClose = document.getElementById("lightbox-close");
+
+  function openLightbox(src, alt){
+    lightboxImg.hidden = false;
+    lightboxFallback.hidden = true;
+    lightboxImg.alt = alt;
+    lightboxImg.src = src;
+    lightbox.hidden = false;
+    document.body.style.overflow = "hidden";
+  }
+  function closeLightbox(){
+    lightbox.hidden = true;
+    lightboxImg.removeAttribute("src");
+    document.body.style.overflow = "";
+  }
+  lightboxImg.addEventListener("error", function(){
+    if (!lightboxImg.getAttribute("src")) return;
+    lightboxImg.hidden = true;
+    lightboxFallback.hidden = false;
+  });
+  lightboxClose.addEventListener("click", closeLightbox);
+  lightbox.addEventListener("click", function(e){ if (e.target === lightbox) closeLightbox(); });
+  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && !lightbox.hidden) closeLightbox(); });
+
+  document.querySelectorAll(".shot[data-screenshot]").forEach(function(shot){
+    shot.addEventListener("click", function(){
+      openLightbox(shot.dataset.screenshot, shot.getAttribute("aria-label") || "");
+    });
+    shot.addEventListener("keydown", function(e){
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); shot.click(); }
+    });
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+# Files executed/read on Linux servers — always LF
+# Файлы, которые исполняются/читаются на Linux-серверах, — всегда LF
+*.sh text eol=lf
+deploy/*.service text eol=lf
+deploy/*.example text eol=lf
