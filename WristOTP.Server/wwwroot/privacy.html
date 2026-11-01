@@ -1,0 +1,214 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>WristOTP — Privacy Policy</title>
+<style>
+  /* Same dark palette as the landing page (index.html).
+     Та же тёмная палитра, что у стартовой страницы (index.html). */
+  :root{
+    --bg:#000000;
+    --surface:#111114;
+    --border:#232328;
+    --text:#FFFFFF;
+    --text-secondary:#9A9AA2;
+    --text-muted:#6A6A72;
+    --accent:#3399FF;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text)}
+  body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.6;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:780px;margin:0 auto;padding:40px 20px 80px}
+  a{color:var(--accent)}
+  .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:28px}
+  .top a.home{color:var(--text-secondary);text-decoration:none;font-size:.9rem}
+  .top a.home:hover{color:var(--accent)}
+  .lang{display:flex;gap:8px}
+  .lang a{
+    text-decoration:none;font-size:.85rem;color:var(--text-secondary);
+    border:1px solid var(--border);border-radius:999px;padding:5px 14px;
+  }
+  .lang a:hover{border-color:var(--accent);color:var(--accent)}
+  h1{font-size:1.9rem;line-height:1.2;margin:0 0 6px}
+  .date{color:var(--text-muted);font-size:.85rem;margin:0 0 28px}
+  h2{font-size:1.15rem;margin:34px 0 10px}
+  p,li{color:#D8D8DE;font-size:.95rem}
+  ul{padding-left:22px}
+  li{margin:4px 0}
+  .summary{
+    background:var(--surface);border:1px solid var(--border);border-radius:16px;
+    padding:18px 22px;margin:0 0 10px;
+  }
+  .summary p{margin:0}
+  .divider{border:0;border-top:1px solid var(--border);margin:64px 0 48px}
+  code{background:var(--surface);border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:.85em}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <a class="home" href="/">← WristOTP Relay</a>
+    <div class="lang"><a href="#en">English</a><a href="#ru">Русский</a></div>
+  </div>
+
+  <!-- ===================== English ===================== -->
+  <section id="en" lang="en">
+    <h1>Privacy Policy</h1>
+    <p class="date">Effective date: November 1, 2026</p>
+
+    <div class="summary">
+      <p><strong>In short:</strong> WristOTP has no user accounts, no analytics, no ads and no tracking. Your two-factor secrets live on your watch. When you send an account from your phone to your watch, it travels end-to-end encrypted through a relay server that cannot read it and deletes it within one minute.</p>
+    </div>
+
+    <h2>1. What this policy covers</h2>
+    <p>WristOTP consists of three parts: the <strong>watch app</strong> (generates one-time codes), the <strong>phone companion app</strong> (adds accounts and sends them to the watch) and the <strong>relay server</strong> at this address (passes the encrypted data between them). This policy describes what data each part handles.</p>
+
+    <h2>2. Data stored on your devices</h2>
+    <ul>
+      <li><strong>Watch app:</strong> the accounts you add (service name, login and the secret key used to generate codes), folders you create and app settings. They are stored only inside the app's private storage on the watch and are never uploaded anywhere.</li>
+      <li><strong>Phone app:</strong> the identifier of your watch (see below) and app settings, so you don't have to scan the watch again. An account you are sending is kept only in memory while the sync code is shown.</li>
+      <li><strong>Watch identifier:</strong> the watch shows its anonymous developer device ID (ODID) as a QR code. It is not linked to your name or Huawei account and differs between developers. It never leaves your devices in readable form — it is only used to derive encryption keys.</li>
+    </ul>
+
+    <h2>3. Data sent to the relay server</h2>
+    <p>When you send an account from the phone to the watch:</p>
+    <ul>
+      <li>The phone encrypts the account with AES-256-GCM. The key and the storage ID are derived (HKDF-SHA256) from the watch identifier and a 6-digit code that you type on the watch. The relay receives only the storage ID and the encrypted data — it <strong>cannot decrypt it</strong> and does not know which watch or person it belongs to.</li>
+      <li>The encrypted data is kept <strong>in memory only</strong>, never written to disk, and is deleted as soon as the watch downloads it, or after <strong>one minute</strong>, whichever comes first.</li>
+      <li>There are no user accounts, profiles, backups or databases on the server.</li>
+    </ul>
+
+    <h2>4. Technical data (logs)</h2>
+    <ul>
+      <li>To limit abuse, the server temporarily keeps the IP address of each request in memory for about one minute (rate limiting). It is not stored.</li>
+      <li>The web server keeps an access log for security and troubleshooting: a <strong>truncated IP address</strong> (the last part is removed, e.g. <code>203.0.113.0</code>), the time, the requested address, the response status and the browser/app name. These logs are kept for up to <strong>52 days</strong> and then deleted automatically. They are never shared or used to identify anyone.</li>
+      <li>The landing page shows anonymous counters only (how many items are waiting, total sent and received).</li>
+    </ul>
+
+    <h2>5. Permissions the apps use</h2>
+    <ul>
+      <li><strong>Camera</strong> (phone) — to scan QR codes of the watch and of services. Images are processed on the device and are not stored or sent anywhere. You can also pick a QR image from a file instead.</li>
+      <li><strong>Internet</strong> (phone and watch) — only to talk to the relay server.</li>
+      <li><strong>PIN / biometrics</strong> (watch, optional) — to lock the app. The check is done by the watch system; the app never receives your PIN or biometric data.</li>
+      <li><strong>Vibration</strong> (watch) — haptic feedback.</li>
+    </ul>
+
+    <h2>6. What we don't do</h2>
+    <ul>
+      <li>No analytics, advertising or tracking SDKs; no cookies on this website.</li>
+      <li>We don't sell, rent or share data with anyone.</li>
+      <li>The relay runs on a rented virtual server; the hosting provider only stores the server itself and has no access to decrypted data.</li>
+    </ul>
+
+    <h2>7. Deleting your data</h2>
+    <p>Data on the relay is deleted automatically within one minute. Data on your devices is deleted when you remove an account in the app or uninstall the app. There is nothing else to delete because there are no accounts on our side.</p>
+
+    <h2>8. Your own relay</h2>
+    <p>The relay is open source. If you point the apps to a different relay server, that server's operator is responsible for it and its own policy applies.</p>
+
+    <h2>9. Children</h2>
+    <p>WristOTP is not directed at children and does not knowingly collect any personal data from anyone.</p>
+
+    <h2>10. Changes</h2>
+    <p>If this policy changes, the new version will be published on this page with a new effective date.</p>
+
+    <h2>11. Contact</h2>
+    <p>Questions about privacy: <span class="contact">see the project repository</span>.</p>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ===================== Русский ===================== -->
+  <section id="ru" lang="ru">
+    <h1>Политика конфиденциальности</h1>
+    <p class="date">Дата вступления в силу: 1 ноября 2026 г.</p>
+
+    <div class="summary">
+      <p><strong>Коротко:</strong> в WristOTP нет учётных записей, аналитики, рекламы и слежки. Ваши секреты двухфакторной аутентификации хранятся на часах. Когда вы отправляете аккаунт с телефона на часы, он идёт со сквозным шифрованием через сервер-релей, который не может его прочитать и удаляет его в течение минуты.</p>
+    </div>
+
+    <h2>1. Что охватывает политика</h2>
+    <p>WristOTP состоит из трёх частей: <strong>приложение для часов</strong> (генерирует одноразовые коды), <strong>приложение-компаньон для телефона</strong> (добавляет аккаунты и отправляет их на часы) и <strong>сервер-релей</strong> по этому адресу (передаёт между ними зашифрованные данные). Здесь описано, какие данные обрабатывает каждая часть.</p>
+
+    <h2>2. Данные на ваших устройствах</h2>
+    <ul>
+      <li><strong>Приложение на часах:</strong> добавленные аккаунты (название сервиса, логин и секретный ключ для генерации кодов), созданные папки и настройки. Хранятся только в закрытом хранилище приложения на часах и никуда не выгружаются.</li>
+      <li><strong>Приложение на телефоне:</strong> идентификатор ваших часов (см. ниже) и настройки — чтобы не сканировать часы повторно. Отправляемый аккаунт хранится только в памяти, пока на экране показан код синхронизации.</li>
+      <li><strong>Идентификатор часов:</strong> часы показывают свой анонимный идентификатор устройства для разработчика (ODID) в виде QR-кода. Он не связан с вашим именем или аккаунтом Huawei и различается у разных разработчиков. В открытом виде он не покидает ваши устройства — из него только вычисляются ключи шифрования.</li>
+    </ul>
+
+    <h2>3. Данные, которые получает сервер-релей</h2>
+    <p>Когда вы отправляете аккаунт с телефона на часы:</p>
+    <ul>
+      <li>Телефон шифрует аккаунт алгоритмом AES-256-GCM. Ключ и идентификатор записи вычисляются (HKDF-SHA256) из идентификатора часов и 6-значного кода, который вы вводите на часах. Релей получает только идентификатор записи и зашифрованные данные — он <strong>не может их расшифровать</strong> и не знает, каким часам или человеку они принадлежат.</li>
+      <li>Зашифрованные данные хранятся <strong>только в памяти</strong>, на диск не записываются и удаляются сразу, как только часы их скачали, или через <strong>одну минуту</strong> — что наступит раньше.</li>
+      <li>На сервере нет учётных записей, профилей, резервных копий и баз данных.</li>
+    </ul>
+
+    <h2>4. Технические данные (журналы)</h2>
+    <ul>
+      <li>Для защиты от злоупотреблений сервер около минуты держит в памяти IP-адрес запроса (ограничение частоты запросов). На диск он не записывается.</li>
+      <li>Веб-сервер ведёт журнал доступа для безопасности и диагностики: <strong>урезанный IP-адрес</strong> (последняя часть удалена, например <code>203.0.113.0</code>), время, запрошенный адрес, код ответа и название браузера/приложения. Журналы хранятся до <strong>52 дней</strong> и затем удаляются автоматически. Они никому не передаются и не используются для установления личности.</li>
+      <li>Стартовая страница показывает только анонимные счётчики (сколько записей ожидает, сколько всего отправлено и получено).</li>
+    </ul>
+
+    <h2>5. Какие разрешения используют приложения</h2>
+    <ul>
+      <li><strong>Камера</strong> (телефон) — для сканирования QR-кодов часов и сервисов. Изображения обрабатываются на устройстве, не сохраняются и никуда не отправляются. Вместо камеры можно выбрать картинку с QR-кодом из файлов.</li>
+      <li><strong>Интернет</strong> (телефон и часы) — только для связи с сервером-релеем.</li>
+      <li><strong>PIN / биометрия</strong> (часы, по желанию) — для блокировки приложения. Проверку выполняет система часов; приложение никогда не получает ваш PIN или биометрические данные.</li>
+      <li><strong>Вибрация</strong> (часы) — тактильный отклик.</li>
+    </ul>
+
+    <h2>6. Чего мы не делаем</h2>
+    <ul>
+      <li>Нет аналитики, рекламы и SDK для слежки; на этом сайте нет cookie.</li>
+      <li>Мы не продаём, не сдаём и не передаём данные третьим лицам.</li>
+      <li>Релей работает на арендованном виртуальном сервере; хостинг-провайдер хранит только сам сервер и не имеет доступа к расшифрованным данным.</li>
+    </ul>
+
+    <h2>7. Удаление данных</h2>
+    <p>Данные на релее удаляются автоматически в течение минуты. Данные на ваших устройствах удаляются, когда вы удаляете аккаунт в приложении или удаляете само приложение. Больше удалять нечего — учётных записей на нашей стороне нет.</p>
+
+    <h2>8. Свой сервер-релей</h2>
+    <p>Код релея открыт. Если вы укажете в приложениях другой сервер-релей, за него отвечает его владелец и действует его политика.</p>
+
+    <h2>9. Дети</h2>
+    <p>WristOTP не предназначен для детей и сознательно не собирает ни у кого персональные данные.</p>
+
+    <h2>10. Изменения</h2>
+    <p>При изменении политики новая редакция будет опубликована на этой странице с новой датой вступления в силу.</p>
+
+    <h2>11. Контакты</h2>
+    <p>Вопросы о конфиденциальности: <span class="contact">см. репозиторий проекта</span>.</p>
+  </section>
+
+</div>
+<script>
+  // Contact e-mail comes from server config (Links:ContactEmail), so a
+  // self-hosted relay shows its own operator's contact; falls back to the
+  // repository link. / Контакт — из конфига сервера (Links:ContactEmail):
+  // свой экземпляр релея покажет контакт своего владельца; иначе — ссылка
+  // на репозиторий.
+  fetch("/api/v1/config", {cache: "no-store"}).then(function(r){ return r.json(); }).then(function(c){
+    document.querySelectorAll(".contact").forEach(function(el){
+      if (c.contactEmail) {
+        el.innerHTML = "";
+        var a = document.createElement("a");
+        a.href = "mailto:" + c.contactEmail;
+        a.textContent = c.contactEmail;
+        el.appendChild(a);
+      } else if (c.githubRepoUrl) {
+        el.innerHTML = "";
+        var g = document.createElement("a");
+        g.href = c.githubRepoUrl;
+        g.textContent = c.githubRepoUrl;
+        el.appendChild(g);
+      }
+    });
+  }).catch(function(){ /* keep fallback text / оставить текст по умолчанию */ });
+</script>
+</body>
+</html>

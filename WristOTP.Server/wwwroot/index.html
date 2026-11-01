@@ -139,14 +139,14 @@
   /* Live activity strip: exactly 60 seconds wide (= the cache entry TTL,
      RelayStore.Ttl), 12 columns of 5 s. A column enters on the right and
      leaves on the left after 60 s: .pulse-track slides left continuously via
-     rAF and snaps back to 0 when the server's bucket changes (seamless,
-     because the new rightmost column is already drawn in that spot).
+     rAF on the server's clock and snaps back to 0 at each bucket boundary
+     (seamless: the new rightmost column is already drawn in that spot).
 
      Живая шкала активности: ровно 60 секунд в ширину (= TTL записи в кэше,
      RelayStore.Ttl), 12 столбиков по 5 с. Столбик появляется справа и
      уходит влево через 60 с: .pulse-track непрерывно едет влево через rAF и
-     возвращается в 0 при смене бакета на сервере (бесшовно — новый крайний
-     столбик уже нарисован на этом месте). */
+     возвращается в 0 на каждой границе бакета по часам сервера (бесшовно —
+     новый крайний столбик уже нарисован на этом месте). */
   .pulse-caption{
     margin-top:26px;font-size:.72rem;color:var(--text-muted);
     text-transform:uppercase;letter-spacing:.08em;text-align:center;
@@ -564,6 +564,7 @@
     Relay online since <span id="footer-since">–</span>
     <div class="copyright">
       WristOTP · 2026
+      <a href="/privacy">Privacy Policy</a>
       <a href="#" id="github-link" target="_blank" rel="noopener noreferrer" hidden>GitHub</a>
     </div>
   </footer>
@@ -623,29 +624,45 @@
   }
 
   var startedAtIso = null;
-  var currentBucketIndex = null;
   var POLL_MS = 1000;
 
   // 12 columns x 5 s = exactly the 60-second window (the cache entry TTL).
   // The history is computed on the SERVER (RelayStats.GetRecentBuckets), so
-  // it survives a reload and looks the same in every tab — the page only
-  // shows authoritative numbers.
+  // it survives a reload and looks the same in every tab.
   // 12 столбиков x 5 с = ровно 60-секундное окно (TTL записи в кэше).
   // История считается на СЕРВЕРЕ (RelayStats.GetRecentBuckets), поэтому
-  // переживает перезагрузку и одинакова во всех вкладках — страница лишь
-  // показывает авторитетные числа.
+  // переживает перезагрузку и одинакова во всех вкладках.
   var BUCKET_MS = 5000;
   var BUCKET_COUNT = 12;
+  // values[0..11] — the last 12 buckets (oldest → current), values[12] — an
+  // empty slot entering from the right while the strip slides.
+  // values[0..11] — 12 последних бакетов (от старого к текущему),
+  // values[12] — пустой слот, въезжающий справа во время движения ленты.
   var values = new Array(BUCKET_COUNT + 1).fill(0);
+  var renderedKey = "";
+  // Server clock offset (server ms − local ms) and the bucket the strip
+  // currently shows. The animation runs on the server's clock computed
+  // locally, so it never waits for a poll at a bucket boundary.
+  // Смещение часов сервера (мс сервера − локальные мс) и бакет, который
+  // сейчас показывает лента. Анимация идёт по часам сервера, вычисленным
+  // локально, поэтому на границе бакета она не ждёт опроса.
+  var serverOffsetMs = null;
+  var shownBucket = null;
   var track = document.getElementById("pulse-track");
   var wrap = document.getElementById("pulse-wrap");
-  var lastTickAt = performance.now();
 
   function slotWidth(){
     return wrap.clientWidth / BUCKET_COUNT;
   }
 
-  function renderColumns(){
+  // Rebuilds the columns only when the numbers actually changed — rebuilding
+  // every second restarted the bars' CSS animations (visible flicker).
+  // Перестраивает столбики, только если числа изменились: перестройка раз в
+  // секунду перезапускала CSS-анимации столбиков (было видно мерцание).
+  function renderColumns(force){
+    var key = values.join(",") + "|" + wrap.clientWidth;
+    if (!force && key === renderedKey) return;
+    renderedKey = key;
     var w = slotWidth();
     var max = Math.max(1, Math.max.apply(null, values));
     track.innerHTML = "";
@@ -671,33 +688,44 @@
     });
   }
 
-  // Resets the "conveyor" offset to the start of the current bucket. The new
-  // rightmost column is drawn exactly where translateX(-slotWidth) just was,
-  // so there is no visible jump. elapsedMs is how much of the bucket has
-  // already passed on the server, keeping the animation in step with it.
-  // Сброс сдвига "конвейера" в начало текущего бакета. Новый крайний столбик
-  // нарисован ровно там, где только что был translateX(-slotWidth), поэтому
-  // прыжка не видно. elapsedMs — сколько бакета уже прошло на сервере, чтобы
-  // анимация шла с ним в такт.
-  function resetSlide(elapsedMs){
-    track.style.transition = "none";
-    track.style.transform = "translateX(0px)";
-    void track.offsetWidth; // force reflow before removing transition:none / форсируем reflow
-    track.style.transition = "";
-    lastTickAt = performance.now() - (elapsedMs || 0);
+  // Server history aligned to the bucket the strip shows: if the strip has
+  // already moved on (d > 0), older server buckets drop off the left and the
+  // new ones are still empty.
+  // История с сервера, выровненная по бакету ленты: если лента уже ушла
+  // вперёд (d > 0), старые бакеты сервера уходят влево, новые пока пустые.
+  function alignToShown(serverBuckets, serverBucket){
+    var d = shownBucket - serverBucket;
+    var aligned = serverBuckets.slice(Math.min(d, BUCKET_COUNT));
+    while (aligned.length < BUCKET_COUNT) aligned.push(0);
+    return aligned.concat([0]);
   }
 
-  function animateSlide(now){
-    var progress = Math.min(1, (now - lastTickAt) / BUCKET_MS);
-    track.style.transform = "translateX(" + (-progress * slotWidth()) + "px)";
+  function animateSlide(){
+    if (serverOffsetMs !== null) {
+      var t = Date.now() + serverOffsetMs;
+      var b = Math.floor(t / BUCKET_MS);
+      if (b > shownBucket) {
+        // Bucket boundary reached locally: shift the strip right away; the
+        // empty slot that was entering becomes the new current bucket.
+        // Граница бакета наступила локально: сдвигаем ленту сразу; пустой
+        // въезжающий слот становится новым текущим бакетом.
+        var steps = Math.min(b - shownBucket, BUCKET_COUNT + 1);
+        for (var i = 0; i < steps; i++) { values.shift(); values.push(0); }
+        shownBucket = b;
+        renderColumns(false);
+      }
+      var progress = (t - b * BUCKET_MS) / BUCKET_MS;
+      track.style.transform = "translateX(" + (-progress * slotWidth()) + "px)";
+    }
     requestAnimationFrame(animateSlide);
   }
 
-  renderColumns();
+  renderColumns(true);
   requestAnimationFrame(animateSlide);
-  window.addEventListener("resize", renderColumns);
+  window.addEventListener("resize", function(){ renderColumns(true); });
 
   function tick(){
+    var sentAt = Date.now();
     fetch("/api/v1/stats", {cache: "no-store"}).then(function(r){ return r.json(); }).then(function(s){
       animateNumber(document.getElementById("stat-active"), s.activeCount);
       animateNumber(document.getElementById("stat-put"), s.totalPut);
@@ -705,20 +733,23 @@
       startedAtIso = s.startedAtUtc;
       document.getElementById("debug-btn").hidden = !s.isDebugBuild;
 
-      // Every poll replaces the WHOLE strip with the server's history.
-      // Appending only the latest (still open) bucket lost events that
-      // arrived in that bucket after the poll. Poll once a second; slide the
-      // strip only when the server's bucket changes.
-      // Каждый опрос заменяет ВСЮ ленту историей с сервера. Если дописывать
-      // только последний (ещё открытый) бакет, теряются события, пришедшие в
-      // него после опроса. Опрос раз в секунду, сдвиг ленты — только при
-      // смене бакета на сервере.
-      values = s.recentBuckets.concat([0]);
-      renderColumns();
-      if (s.bucketIndex !== currentBucketIndex) {
-        currentBucketIndex = s.bucketIndex;
-        resetSlide(s.bucketElapsedMs);
+      // Server time at the moment of the answer ≈ middle of the request.
+      // Время сервера в момент ответа ≈ середина запроса.
+      var serverNow = s.bucketIndex * BUCKET_MS + s.bucketElapsedMs;
+      var localMid = (sentAt + Date.now()) / 2;
+      serverOffsetMs = serverNow - localMid;
+
+      if (shownBucket === null || s.bucketIndex > shownBucket) {
+        shownBucket = s.bucketIndex;
       }
+      // Every poll refreshes the numbers of the whole strip (an event that
+      // arrived in an earlier bucket after the previous poll is not lost);
+      // the strip position itself is driven by animateSlide only.
+      // Каждый опрос обновляет числа всей ленты (событие, пришедшее в
+      // предыдущий бакет после прошлого опроса, не теряется); положение
+      // ленты задаёт только animateSlide.
+      values = alignToShown(s.recentBuckets, s.bucketIndex);
+      renderColumns(false);
     }).catch(function(){ /* server unreachable — leave last known values on screen */ });
   }
 

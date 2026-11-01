@@ -6,6 +6,17 @@
 # Замените relay.example.com на свой домен, а ssl_certificate* — на пути к
 # своему сертификату (например, выпущенному certbot / Let's Encrypt).
 
+# Access log with truncated client IPs (last IPv4 octet / IPv6 tail zeroed)
+# and no Referer — matches the privacy policy served at /privacy.
+# Журнал доступа с урезанным IP (последний октет IPv4 / хвост IPv6 обнуляются)
+# и без Referer — соответствует политике конфиденциальности на /privacy.
+map $remote_addr $wristotp_anon_ip {
+    ~(?P<ip>\d+\.\d+\.\d+)\.\d+    $ip.0;
+    ~(?P<ip>[^:]+:[^:]+:[^:]+):         $ip::;
+    default                             0.0.0.0;
+}
+log_format wristotp_anon '$wristotp_anon_ip - - [$time_local] "$request" $status $body_bytes_sent "$http_user_agent"';
+
 server {
     listen 80;
     server_name relay.example.com;
@@ -33,7 +44,7 @@ server {
     ssl_session_cache shared:SSL:10m;
     ssl_session_timeout 10m;
 
-    access_log /var/log/nginx/wristotp.access.log;
+    access_log /var/log/nginx/wristotp.access.log wristotp_anon;
     error_log  /var/log/nginx/wristotp.error.log warn;
 
     # The server itself rejects payloads over 10 KB (413); this limit is

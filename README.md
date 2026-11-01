@@ -24,7 +24,8 @@ account bundle from the phone app to the watch app.
 | `GET` | `/api/v1/tokens/{id}` | Return the entry and **delete it immediately** (one-time read; a repeat → `404`). Rate limit: 5 requests/min/IP (sliding window) → `429`. |
 | `GET` | `/` | Public landing page with live, anonymous counters. |
 | `GET` | `/api/v1/stats` | Aggregated counters only — no IDs, no payloads. |
-| `GET` | `/api/v1/config` | Page settings (link to the source repository). |
+| `GET` | `/api/v1/config` | Page settings (repository link, privacy contact). |
+| `GET` | `/privacy` | Privacy policy (English and Russian). |
 | `GET` | `/debug` | Diagnostics page — **Debug build only**; the code is not compiled into Release at all. Shows payload sizes, never contents. |
 
 ### Run locally
@@ -54,8 +55,15 @@ phone apps.
 
 ### Configuration
 
-`appsettings.json` → `Links:GithubRepoUrl` — the repository link shown on the
-landing page (leave empty to hide it).
+`appsettings.json` (or environment variables, e.g. `Links__ContactEmail`):
+
+- `Links:GithubRepoUrl` — the repository link shown on the landing page
+  (leave empty to hide it).
+- `Links:ContactEmail` — privacy contact shown on `/privacy` (the privacy
+  policy page app stores ask for). Empty → the repository link is shown.
+
+If you run your own relay, review `wwwroot/privacy.html` so that it matches
+how you operate it (logs, retention, hosting).
 
 ## Русский
 
@@ -80,7 +88,8 @@ landing page (leave empty to hide it).
 | `GET` | `/api/v1/tokens/{id}` | Отдать запись и **сразу удалить** (одноразовое чтение; повтор → `404`). Лимит: 5 запросов/мин/IP (скользящее окно) → `429`. |
 | `GET` | `/` | Публичная стартовая страница с живыми анонимными счётчиками. |
 | `GET` | `/api/v1/stats` | Только агрегированные счётчики — без ID и содержимого. |
-| `GET` | `/api/v1/config` | Настройки страницы (ссылка на репозиторий). |
+| `GET` | `/api/v1/config` | Настройки страницы (ссылка на репозиторий, контакт). |
+| `GET` | `/privacy` | Политика конфиденциальности (английский и русский). |
 | `GET` | `/debug` | Диагностика — **только Debug-сборка**; в Release этот код не компилируется вовсе. Показывает размеры пакетов, но не содержимое. |
 
 ### Запуск локально
@@ -102,5 +111,14 @@ Release — только `127.0.0.1` (перед ним ставится reverse
 
 ### Настройки
 
-`appsettings.json` → `Links:GithubRepoUrl` — ссылка на репозиторий на
-стартовой странице (пустое значение скрывает её).
+`appsettings.json` (или переменные окружения, например `Links__ContactEmail`):
+
+- `Links:GithubRepoUrl` — ссылка на репозиторий на стартовой странице
+  (пустое значение скрывает её).
+- `Links:ContactEmail` — контакт по вопросам конфиденциальности на
+  `/privacy` (страница политики, которую требуют магазины приложений).
+  Пусто → показывается ссылка на репозиторий.
+
+Если вы разворачиваете свой релей, проверьте `wwwroot/privacy.html` — она
+должна соответствовать тому, как работает ваш сервер (журналы, сроки
+хранения, хостинг).

@@ -129,6 +129,15 @@ var app = builder.Build();
 // сервера может указать на свой форк, не трогая страницу.
 var githubRepoUrl = app.Configuration["Links:GithubRepoUrl"] ?? "";
 
+// Privacy contact shown on /privacy. Empty in the repository — each relay
+// operator sets their own (appsettings.json or the Links__ContactEmail
+// environment variable); the page then falls back to the repository link.
+//
+// Контакт по вопросам конфиденциальности для /privacy. В репозитории пустой —
+// каждый владелец релея задаёт свой (appsettings.json или переменная
+// окружения Links__ContactEmail); иначе страница показывает ссылку на репозиторий.
+var contactEmail = app.Configuration["Links:ContactEmail"] ?? "";
+
 // Behind a reverse proxy every request would come from 127.0.0.1, and the
 // rate limiter above would treat all clients as a single IP. The client IP is
 // taken from X-Forwarded-For, accepted only from loopback (default
@@ -155,12 +164,20 @@ app.UseRateLimiter();
 app.UseDefaultFiles();
 app.UseStaticFiles();
 
+// Privacy policy (wwwroot/privacy.html) at a clean /privacy URL — the address
+// app stores ask for when publishing the watch and phone apps.
+//
+// Политика конфиденциальности (wwwroot/privacy.html) по короткому адресу
+// /privacy — его требуют магазины приложений при публикации приложений.
+app.MapGet("/privacy", (IWebHostEnvironment env) =>
+    Results.File(Path.Combine(env.WebRootPath, "privacy.html"), "text/html; charset=utf-8"));
+
 // Page settings that do not change while the server runs — separate from
 // /api/v1/stats so the page fetches them once instead of polling.
 //
 // Настройки страницы, которые не меняются во время работы, — отдельно от
 // /api/v1/stats, чтобы страница брала их один раз, а не опрашивала.
-app.MapGet("/api/v1/config", () => Results.Ok(new { githubRepoUrl }));
+app.MapGet("/api/v1/config", () => Results.Ok(new { githubRepoUrl, contactEmail }));
 
 app.MapGet("/api/v1/stats", (RelayStore store, RelayStats stats) =>
 {
