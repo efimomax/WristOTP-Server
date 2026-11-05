@@ -64,6 +64,7 @@ builder.Services.AddMemoryCache();
 builder.Services.AddSingleton<DeliveryCounter>();
 builder.Services.AddSingleton<RelayStats>();
 builder.Services.AddSingleton<RelayStore>();
+builder.Services.AddHostedService<ExpirySweeper>();
 #if DEBUG
 builder.Services.AddSingleton<RelayDiagnostics>();
 #endif
@@ -282,7 +283,7 @@ app.MapGet("/api/v1/tokens/{id}", (string id, RelayStore store) =>
 //
 // Увеличивать при каждом изменении Program.cs/RelayStore/RelayDiagnostics —
 // показывается на /debug, чтобы было видно, подхватил ли процесс новый код.
-const int DebugServerVersion = 3;
+const int DebugServerVersion = 4;
 
 // Diagnostics page: live snapshot of active cache entries (LookupID, payload
 // size) and a log of recent requests, including rate-limit rejections. Debug

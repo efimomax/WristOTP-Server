@@ -33,13 +33,15 @@ public sealed class RelayStore
         _stats = stats;
     }
 
-    // MemoryCache keeps an up-to-date entry count itself, including expiry by
-    // TTL. "How many unclaimed entries are stored right now" is safe to show
-    // publicly — unlike RelayDiagnostics, there is no LookupID here.
+    // Entry count of MemoryCache. Expired entries are removed by
+    // ExpirySweeper within a few seconds, so this is "how many unclaimed
+    // entries are stored right now". Safe to show publicly — unlike
+    // RelayDiagnostics, there is no LookupID here.
     //
-    // MemoryCache сам ведёт актуальный счётчик записей, включая истечение по
-    // TTL. "Сколько сейчас невостребованных записей" безопасно показывать
-    // публично — в отличие от RelayDiagnostics, LookupID тут нет.
+    // Число записей в MemoryCache. Просроченные записи удаляет ExpirySweeper
+    // в течение нескольких секунд, поэтому это "сколько невостребованных
+    // записей хранится сейчас". Безопасно показывать публично — в отличие от
+    // RelayDiagnostics, LookupID тут нет.
     public int ActiveCount => _cache is MemoryCache mc ? mc.Count : 0;
 
     public void Put(string lookupId, TokenPayload payload)
