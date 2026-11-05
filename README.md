@@ -13,25 +13,21 @@ that code and the account arrives — end-to-end encrypted through this relay.
 
 ### On the phone / На телефоне
 
-<table>
-  <tr>
-    <td align="center"><img src="docs/screenshots/phone-1-main.png" width="200" alt="Main screen"><br><sub>Add an account<br>Добавить аккаунт</sub></td>
-    <td align="center"><img src="docs/screenshots/phone-2-manual-entry.png" width="200" alt="Manual entry"><br><sub>Enter it manually or scan a QR<br>Ввести вручную или по QR</sub></td>
-    <td align="center"><img src="docs/screenshots/phone-3-connect-watch.png" width="200" alt="Connect your watch"><br><sub>Scan the watch ID once<br>Один раз отсканировать часы</sub></td>
-    <td align="center"><img src="docs/screenshots/phone-4-sync-code.png" width="200" alt="Sync code"><br><sub>Get a one-time code<br>Получить одноразовый код</sub></td>
-  </tr>
-</table>
+<p align="center"><img src="docs/screenshots/phone-flow.png" alt="Phone app screenshots"></p>
+
+1. Enter the account (or scan its QR) · Ввести аккаунт (или отсканировать его QR)
+2. Scan the watch ID once · Один раз отсканировать ID часов
+3. Get a one-time sync code · Получить одноразовый код синхронизации
+4. Main screen: three ways to add accounts · Главный экран: три способа добавить аккаунт
 
 ### On the watch / На часах
 
-<table>
-  <tr>
-    <td align="center"><img src="docs/screenshots/watch-1-add-menu.png" width="180" alt="Add account menu"><br><sub>Sync from Phone<br>Синхронизация с телефона</sub></td>
-    <td align="center"><img src="docs/screenshots/watch-2-sync-keypad.png" width="180" alt="Sync code keypad"><br><sub>Type the same code<br>Ввести тот же код</sub></td>
-    <td align="center"><img src="docs/screenshots/watch-3-folder.png" width="180" alt="Codes in a folder"><br><sub>Codes, grouped in folders<br>Коды, разложенные по папкам</sub></td>
-    <td align="center"><img src="docs/screenshots/watch-4-code.png" width="180" alt="One account"><br><sub>Live code with a timer<br>Живой код с таймером</sub></td>
-  </tr>
-</table>
+<p align="center"><img src="docs/screenshots/watch-flow.png" alt="Watch app screenshots"></p>
+
+1. Sync from Phone · Синхронизация с телефона
+2. Type the same code · Ввести тот же код
+3. Codes, grouped in folders · Коды, разложенные по папкам
+4. Live code with a timer · Живой код с таймером
 
 <sub>Screenshots use a demo account. / На скриншотах — демо-аккаунт.</sub>
 

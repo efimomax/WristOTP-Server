@@ -265,8 +265,10 @@
     animation:lightbox-in .2s ease;
   }
   @keyframes lightbox-in{from{opacity:0}to{opacity:1}}
-  .lightbox-inner{max-width:min(90vw,380px);max-height:85vh;position:relative}
-  .lightbox-inner img{width:100%;height:auto;border-radius:16px;display:block;box-shadow:0 24px 64px -16px rgba(0,0,0,.7)}
+  .lightbox-inner{max-width:min(90vw,420px);position:relative}
+  .lightbox-inner img{display:block;max-width:100%;max-height:85vh;width:auto;height:auto;border-radius:24px;box-shadow:0 24px 64px -16px rgba(0,0,0,.7)}
+  /* Watch screenshots are round. / Скриншоты часов — круглые. */
+  .lightbox-inner img.round{border-radius:50%}
   .lightbox-fallback{
     background:var(--surface);border:1px solid var(--border);border-radius:16px;
     padding:48px 28px;text-align:center;color:var(--text-secondary);font-size:.9rem;min-width:260px;
@@ -363,6 +365,18 @@
   }
   .oss-btn:hover{transform:translateY(-2px);box-shadow:0 10px 26px -12px rgba(51,153,255,.6)}
 
+  /* "See it in action": ready-made rows of phone and watch screenshots
+     (the same images as in the repository README), visible without clicks.
+     "See it in action": готовые ряды скриншотов телефона и часов (те же
+     картинки, что в README репозитория), видны без кликов. */
+  .gallery{display:flex;flex-direction:column;gap:30px;margin-top:8px}
+  .gallery figure{margin:0}
+  .gallery img{display:block;width:100%;height:auto}
+  .gallery figcaption{
+    margin-top:12px;text-align:center;color:var(--text-secondary);
+    font-size:.82rem;text-transform:uppercase;letter-spacing:.08em;
+  }
+
   footer{padding:32px 0 60px;text-align:center;color:var(--text-secondary);font-size:.82rem}
   footer a{color:var(--accent);text-decoration:none}
   footer a:hover{text-decoration:underline}
@@ -457,7 +471,7 @@
     <div class="flow">
       <div class="step">
         <div class="n">1</div>
-        <div class="shot" data-screenshot="/images/screenshots/screenshot_1.png" role="button" tabindex="0" aria-label="View screenshot: Add the account">
+        <div class="shot" data-screenshot="/images/screenshots/step-1-add-account.png" role="button" tabindex="0" aria-label="View screenshot: Add the account">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/>
             <rect x="15" y="15" width="2.4" height="2.4" rx=".4"/><rect x="19.6" y="15" width="2.4" height="2.4" rx=".4"/><rect x="15" y="19.6" width="2.4" height="2.4" rx=".4"/>
@@ -470,7 +484,7 @@
       </div>
       <div class="step">
         <div class="n">2</div>
-        <div class="shot" data-screenshot="/images/screenshots/screenshot_2.png" role="button" tabindex="0" aria-label="View screenshot: Point it at your watch">
+        <div class="shot" data-screenshot="/images/screenshots/step-2-connect-watch.png" role="button" tabindex="0" aria-label="View screenshot: Point it at your watch">
           <div class="scan-line"></div>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="7" y="4" width="10" height="16" rx="3"/><path d="M9 2h6v3H9zM9 19h6v3H9z"/><rect x="9.5" y="9.5" width="5" height="5" rx=".6"/>
@@ -482,7 +496,7 @@
       </div>
       <div class="step">
         <div class="n">3</div>
-        <div class="shot" data-screenshot="/images/screenshots/screenshot_3.png" role="button" tabindex="0" aria-label="View screenshot: Get your one-time code">
+        <div class="shot" data-screenshot="/images/screenshots/step-3-sync-code.png" role="button" tabindex="0" aria-label="View screenshot: Get your one-time code">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="9"/><path d="M6 12h.01M8.4 12h.01M10.8 12h.01M13.2 12h.01M15.6 12h.01M18 12h.01" stroke-width="2.4"/>
           </svg>
@@ -493,7 +507,7 @@
       </div>
       <div class="step">
         <div class="n">4</div>
-        <div class="shot" data-screenshot="/images/screenshots/screenshot_4.png" role="button" tabindex="0" aria-label="View screenshot: Type it into the watch">
+        <div class="shot" data-screenshot="/images/screenshots/step-4-watch-keypad.png" data-round="1" role="button" tabindex="0" aria-label="View screenshot: Type it into the watch">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="7" y="4" width="10" height="16" rx="3"/><path d="M9 11h.01M12 11h.01M15 11h.01M9 14h.01M12 14h.01M15 14h.01" stroke-width="2.4"/>
           </svg>
@@ -504,7 +518,7 @@
       </div>
       <div class="step">
         <div class="n">5</div>
-        <div class="shot" data-screenshot="/images/screenshots/screenshot_5.png" role="button" tabindex="0" aria-label="View screenshot: Codes appear on your watch">
+        <div class="shot" data-screenshot="/images/screenshots/step-5-watch-code.png" data-round="1" role="button" tabindex="0" aria-label="View screenshot: Codes appear on your watch">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="7" y="4" width="10" height="16" rx="3"/><path d="M8 12h.01M9.6 12h.01M11.2 12h.01M12.8 12h.01M14.4 12h.01M16 12h.01" stroke-width="2"/>
           </svg>
@@ -513,6 +527,22 @@
         <h4>Codes appear on your watch</h4>
         <p>The watch fetches the account and starts generating codes right there.</p>
       </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="kicker">See it in action</div>
+    <h2>The same account, on both screens</h2>
+    <p class="sub">Add it on the phone, type a one-time code on the watch — and it&#39;s there. (Screenshots use a demo account.)</p>
+    <div class="gallery">
+      <figure>
+        <img src="/images/screenshots/phone-flow.png" alt="Phone app: add an account, connect the watch, get a one-time sync code" loading="lazy" width="1300" height="621">
+        <figcaption>On the phone</figcaption>
+      </figure>
+      <figure>
+        <img src="/images/screenshots/watch-flow.png" alt="Watch app: sync from phone, type the code, codes in folders, live code with a timer" loading="lazy" width="1300" height="272">
+        <figcaption>On the watch</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -818,7 +848,8 @@
   var lightboxFallback = document.getElementById("lightbox-fallback");
   var lightboxClose = document.getElementById("lightbox-close");
 
-  function openLightbox(src, alt){
+  function openLightbox(src, alt, round){
+    lightboxImg.classList.toggle("round", !!round);
     lightboxImg.hidden = false;
     lightboxFallback.hidden = true;
     lightboxImg.alt = alt;
@@ -842,7 +873,7 @@
 
   document.querySelectorAll(".shot[data-screenshot]").forEach(function(shot){
     shot.addEventListener("click", function(){
-      openLightbox(shot.dataset.screenshot, shot.getAttribute("aria-label") || "");
+      openLightbox(shot.dataset.screenshot, shot.getAttribute("aria-label") || "", shot.dataset.round);
     });
     shot.addEventListener("keydown", function(e){
       if (e.key === "Enter" || e.key === " ") { e.preventDefault(); shot.click(); }
