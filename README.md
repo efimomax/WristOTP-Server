@@ -76,7 +76,7 @@ account bundle from the phone app to the watch app.
 | `GET` | `/` | Public landing page with live, anonymous counters. |
 | `GET` | `/api/v1/stats` | Aggregated counters only — no IDs, no payloads. |
 | `GET` | `/api/v1/config` | Page settings (repository link, privacy contact). |
-| `GET` | `/privacy` | Privacy policy (English and Russian). |
+| `GET` | `/privacy` | Privacy policy (English, Russian and German). |
 | `GET` | `/debug` | Diagnostics page — **Debug build only**; the code is not compiled into Release at all. Shows payload sizes, never contents. |
 
 ### Run locally
@@ -164,7 +164,7 @@ as well.
 | `GET` | `/` | Публичная стартовая страница с живыми анонимными счётчиками. |
 | `GET` | `/api/v1/stats` | Только агрегированные счётчики — без ID и содержимого. |
 | `GET` | `/api/v1/config` | Настройки страницы (ссылка на репозиторий, контакт). |
-| `GET` | `/privacy` | Политика конфиденциальности (английский и русский). |
+| `GET` | `/privacy` | Политика конфиденциальности (английский, русский и немецкий). |
 | `GET` | `/debug` | Диагностика — **только Debug-сборка**; в Release этот код не компилируется вовсе. Показывает размеры пакетов, но не содержимое. |
 
 ### Запуск локально

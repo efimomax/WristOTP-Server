@@ -53,7 +53,7 @@
 
   <div class="top">
     <a class="home" href="/">← WristOTP Relay</a>
-    <div class="lang"><a href="#en">English</a><a href="#ru">Русский</a></div>
+    <div class="lang"><a href="#en">English</a><a href="#ru">Русский</a><a href="#de">Deutsch</a></div>
   </div>
 
   <!-- ===================== English ===================== -->
@@ -190,6 +190,75 @@
 
     <h2>11. Контакты</h2>
     <p>Вопросы о конфиденциальности: <span class="contact">см. репозиторий проекта</span>.</p>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ===================== Deutsch ===================== -->
+  <section id="de" lang="de">
+    <h1>Datenschutzerklärung</h1>
+    <p class="date">Version 1.0 · Veröffentlicht und gültig ab: 1. November 2026</p>
+
+    <div class="summary">
+      <p><strong>Kurz gesagt:</strong> WristOTP hat keine Benutzerkonten, keine Analyse, keine Werbung und kein Tracking. Ihre Zwei-Faktor-Schlüssel liegen auf Ihrer Uhr. Wenn Sie ein Konto vom Smartphone an Ihre Uhr senden, wird es Ende-zu-Ende-verschlüsselt über einen Relay-Server übertragen, der es nicht lesen kann und es innerhalb einer Minute löscht.</p>
+    </div>
+
+    <h2>1. Geltungsbereich</h2>
+    <p>WristOTP besteht aus drei Teilen: der <strong>Uhr-App</strong> (erzeugt Einmalcodes), der <strong>Begleit-App für das Smartphone</strong> (fügt Konten hinzu und sendet sie an die Uhr) und dem <strong>Relay-Server</strong> unter dieser Adresse (leitet die verschlüsselten Daten zwischen beiden weiter). Diese Erklärung beschreibt, welche Daten jeder Teil verarbeitet.</p>
+
+    <h2>2. Auf Ihren Geräten gespeicherte Daten</h2>
+    <ul>
+      <li><strong>Uhr-App:</strong> die von Ihnen hinzugefügten Konten (Name des Dienstes, Login und der geheime Schlüssel zur Code-Erzeugung), von Ihnen angelegte Ordner und App-Einstellungen. Sie werden ausschließlich im privaten Speicher der App auf der Uhr abgelegt und nirgendwohin hochgeladen.</li>
+      <li><strong>Smartphone-App:</strong> die Kennung Ihrer Uhr (siehe unten) und App-Einstellungen, damit Sie die Uhr nicht erneut scannen müssen. Ein Konto, das Sie gerade senden, wird nur im Arbeitsspeicher gehalten, solange der Sync-Code angezeigt wird.</li>
+      <li><strong>Kennung der Uhr:</strong> Die Uhr zeigt ihre anonyme Entwickler-Gerätekennung (ODID) als QR-Code an. Sie ist nicht mit Ihrem Namen oder Ihrem Huawei-Konto verknüpft und unterscheidet sich je nach Entwickler. Sie verlässt Ihre Geräte nie in lesbarer Form — sie dient nur zur Ableitung der Verschlüsselungsschlüssel.</li>
+    </ul>
+
+    <h2>3. An den Relay-Server übermittelte Daten</h2>
+    <p>Wenn Sie ein Konto vom Smartphone an die Uhr senden:</p>
+    <ul>
+      <li>Das Smartphone verschlüsselt das Konto mit AES-256-GCM. Schlüssel und Speicherkennung werden (per HKDF-SHA256) aus der Kennung der Uhr und einem 6-stelligen Code abgeleitet, den Sie auf der Uhr eingeben. Das Relay erhält nur die Speicherkennung und die verschlüsselten Daten — es <strong>kann sie nicht entschlüsseln</strong> und weiß nicht, zu welcher Uhr oder Person sie gehören.</li>
+      <li>Die verschlüsselten Daten werden <strong>nur im Arbeitsspeicher</strong> gehalten, nie auf die Festplatte geschrieben und gelöscht, sobald die Uhr sie abruft, oder nach <strong>einer Minute</strong> — je nachdem, was zuerst eintritt.</li>
+      <li>Auf dem Server gibt es keine Benutzerkonten, Profile, Sicherungen oder Datenbanken.</li>
+    </ul>
+
+    <h2>4. Technische Daten (keine Protokolle)</h2>
+    <ul>
+      <li><strong>Es wird kein Zugriffsprotokoll geführt.</strong> Der Server speichert keine IP-Adressen, Zeitpunkte oder Inhalte von Anfragen auf seiner Festplatte.</li>
+      <li>Zum Schutz vor Missbrauch hält der Server die IP-Adresse jeder Anfrage etwa eine Minute lang im Arbeitsspeicher (Begrenzung der Anfragerate); sie wird nie auf die Festplatte geschrieben.</li>
+      <li>Das Einzige, was der Server auf der Festplatte speichert, ist <strong>eine anonyme Zahl</strong> — die Gesamtzahl erfolgreicher Übertragungen an Uhren, die auf der Startseite angezeigt wird. Sie enthält nichts über Sie, Ihr Gerät oder Ihre Anfragen.</li>
+      <li>Die Startseite zeigt nur anonyme Zähler (wie viele Einträge warten, wie viele insgesamt gesendet und abgeholt wurden).</li>
+    </ul>
+
+    <h2>5. Berechtigungen der Apps</h2>
+    <ul>
+      <li><strong>Kamera</strong> (Smartphone) — zum Scannen der QR-Codes der Uhr und von Diensten. Die Bilder werden auf dem Gerät verarbeitet und weder gespeichert noch übertragen. Alternativ kann ein QR-Bild aus einer Datei gewählt werden.</li>
+      <li><strong>Internet</strong> (Smartphone und Uhr) — ausschließlich für die Verbindung zum Relay-Server.</li>
+      <li><strong>PIN / Biometrie</strong> (Uhr, optional) — zum Sperren der App. Die Prüfung erfolgt durch das System der Uhr; die App erhält Ihre PIN oder biometrische Daten nie.</li>
+      <li><strong>Vibration</strong> (Uhr) — haptisches Feedback.</li>
+    </ul>
+
+    <h2>6. Was wir nicht tun</h2>
+    <ul>
+      <li>Keine Analyse-, Werbe- oder Tracking-SDKs; keine Cookies auf dieser Website.</li>
+      <li>Wir verkaufen, vermieten oder teilen keine Daten mit Dritten.</li>
+      <li>Das Relay läuft auf einem virtuellen Server, der bei einem Hosting-Anbieter gemietet ist. Ihre Daten befinden sich dort nur im Arbeitsspeicher (RAM), nur in verschlüsselter Form, die allein Ihre Uhr entschlüsseln kann, und höchstens eine Minute lang — keine Ihrer Daten werden je auf die Festplatte des Servers geschrieben, auch nicht verschlüsselt. Daher können weder wir noch der Hosting-Anbieter Ihre Konten lesen.</li>
+    </ul>
+
+    <h2>7. Löschung Ihrer Daten</h2>
+    <p>Daten auf dem Relay werden innerhalb einer Minute automatisch gelöscht. Daten auf Ihren Geräten werden gelöscht, wenn Sie ein Konto in der App entfernen oder die App deinstallieren. Darüber hinaus gibt es nichts zu löschen, da auf unserer Seite keine Konten existieren.</p>
+
+    <h2>8. Ihr eigenes Relay</h2>
+    <p>Das Relay ist Open Source. Für maximale Privatsphäre — oder einfach zur Beruhigung — müssen Sie unserem Server überhaupt nicht vertrauen: Laden Sie den Quellcode herunter, prüfen Sie ihn, betreiben Sie das Relay auf Ihrem eigenen Rechner oder Server und richten Sie die Uhr-App (Settings → Relay server) und die Smartphone-App (Settings) darauf aus. Ihre Daten erreichen unseren Server dann nie. Eine Anleitung finden Sie im Projekt-Repository.</p>
+    <p>Wenn Sie die Apps auf einen anderen Relay-Server ausrichten, ist dessen Betreiber dafür verantwortlich, und es gilt dessen eigene Datenschutzerklärung.</p>
+
+    <h2>9. Kinder</h2>
+    <p>WristOTP richtet sich nicht an Kinder und erhebt wissentlich von niemandem personenbezogene Daten.</p>
+
+    <h2>10. Änderungen</h2>
+    <p>Wenn sich diese Erklärung ändert, wird der aktualisierte Text auf dieser Seite mit einer neuen Versionsnummer und einem neuen Gültigkeitsdatum veröffentlicht (oben auf der Seite angegeben). Die aktuelle Version ist 1.0.</p>
+
+    <h2>11. Kontakt</h2>
+    <p>Fragen zum Datenschutz: <span class="contact">siehe Projekt-Repository</span>.</p>
   </section>
 
 </div>

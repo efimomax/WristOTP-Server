@@ -743,9 +743,10 @@
       var shot = step.querySelector(".shot"), h = step.querySelector("h4");
       if (shot && h) shot.setAttribute("aria-label", (dict["shot.aria"] || "View screenshot: ") + h.textContent);
     });
-    // The privacy page is English + Russian: Russian readers land on their part.
+    // The privacy page has EN, RU and DE parts: open the reader's part.
+    // В политике есть части EN, RU и DE: открыть часть на языке читателя.
     var pl = document.getElementById("privacy-link");
-    if (pl) pl.href = lang === "ru" ? "/privacy#ru" : "/privacy";
+    if (pl) pl.href = lang === "en" ? "/privacy" : "/privacy#" + lang;
     document.querySelectorAll(".lang-switch button").forEach(function(b){
       b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false");
     });
