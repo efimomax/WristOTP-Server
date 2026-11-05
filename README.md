@@ -82,6 +82,13 @@ If you run your own relay, review `wwwroot/privacy.html` so that it matches
 how you operate it (logs, retention, hosting). The published policy says no
 request log is kept — `deploy/nginx.conf.example` is configured that way.
 
+### License
+
+[GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0). You may use,
+study, modify and run the relay. If you run a modified version as a service
+for other people, you must make your modified source code available to them
+as well.
+
 ## Русский
 
 Серверная часть **WristOTP** — TOTP-аутентификатора для часов Huawei
@@ -157,3 +164,11 @@ Release — только `127.0.0.1` (перед ним ставится reverse
 должна соответствовать тому, как работает ваш сервер (журналы, сроки
 хранения, хостинг). В опубликованной политике сказано, что журнал запросов
 не ведётся, — `deploy/nginx.conf.example` настроен именно так.
+
+
+### Лицензия
+
+[GNU Affero General Public License v3.0](LICENSE) (AGPL-3.0). Релей можно
+использовать, изучать, изменять и запускать. Если вы запускаете изменённую
+версию как сервис для других людей, вы обязаны открыть им и свой изменённый
+исходный код.
