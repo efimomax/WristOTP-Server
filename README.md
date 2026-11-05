@@ -29,6 +29,26 @@ that code and the account arrives — end-to-end encrypted through this relay.
 3. Codes, grouped in folders · Коды, разложенные по папкам
 4. Live code with a timer · Живой код с таймером
 
+**What the watch app does / Что умеет приложение для часов**
+
+- **Codes on your wrist** — Standard 6-digit TOTP codes with a countdown ring — generated on the watch itself, no phone or internet needed.
+- **Folders** — Group codes into folders (Work, Banking…). Deleting a folder never deletes the codes inside.
+- **Sync from the phone** — Add accounts with a 6-digit one-time code — end-to-end encrypted, the relay forgets them within a minute.
+- **Or type it in** — Enter an account manually right on the watch if you prefer.
+- **App lock** — Unlock with your watch PIN on start — or every time you come back to the app.
+- **Export by QR** — Show any account as a QR code to move it to another authenticator.
+- **Made for a round screen** — Curved lists, scrolling with the crown, haptic feedback.
+- **Your own relay** — Point the app at a relay you run yourself — the server is open source.
+
+- **Коды на запястье** — Стандартные 6-значные TOTP-коды с кольцом обратного отсчёта — считаются на самих часах, без телефона и интернета.
+- **Папки** — Коды можно разложить по папкам (Работа, Банки…). Удаление папки никогда не удаляет коды в ней.
+- **Синхронизация с телефона** — Аккаунты добавляются по 6-значному одноразовому коду — со сквозным шифрованием, релей забывает их в течение минуты.
+- **Или ввести вручную** — Аккаунт можно ввести прямо на часах.
+- **Блокировка** — Вход по PIN-коду часов при запуске — или при каждом возвращении в приложение.
+- **Экспорт по QR** — Любой аккаунт можно показать QR-кодом, чтобы перенести его в другой аутентификатор.
+- **Для круглого экрана** — Дуговые списки, прокрутка колёсиком, тактильный отклик.
+- **Свой релей** — Приложение можно направить на свой сервер-релей — его код открыт.
+
 <sub>Screenshots use a demo account. / На скриншотах — демо-аккаунт.</sub>
 
 ## English

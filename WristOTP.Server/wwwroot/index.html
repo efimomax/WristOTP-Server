@@ -399,6 +399,21 @@
   .howto li{margin:3px 0}
   .howto strong{color:var(--text)}
 
+  /* Watch app features under the watch screenshots.
+     Возможности приложения для часов под скриншотами часов. */
+  .features-title{margin:6px 0 14px;font-size:1.05rem;text-align:center}
+  .features{
+    list-style:none;margin:0;padding:0;
+    display:grid;grid-template-columns:repeat(2,1fr);gap:12px;
+  }
+  @media (max-width:640px){.features{grid-template-columns:1fr}}
+  .features li{
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    padding:14px 16px;display:flex;flex-direction:column;gap:4px;
+  }
+  .features li strong{font-size:.95rem}
+  .features li span{color:var(--text-secondary);font-size:.86rem;line-height:1.45}
+
   footer{padding:32px 0 60px;text-align:center;color:var(--text-secondary);font-size:.82rem}
   footer a{color:var(--accent);text-decoration:none}
   footer a:hover{text-decoration:underline}
@@ -565,6 +580,19 @@
         <img src="/images/screenshots/watch-flow.png" alt="Watch app: sync from phone, type the code, codes in folders, live code with a timer" loading="lazy" width="1300" height="272">
         <figcaption>On the watch</figcaption>
       </figure>
+      <div>
+        <h3 class="features-title">What the watch app does</h3>
+        <ul class="features">
+          <li><strong>Codes on your wrist</strong><span>Standard 6-digit TOTP codes with a countdown ring — generated on the watch itself, no phone or internet needed.</span></li>
+          <li><strong>Folders</strong><span>Group codes into folders (Work, Banking…). Deleting a folder never deletes the codes inside.</span></li>
+          <li><strong>Sync from the phone</strong><span>Add accounts with a 6-digit one-time code — end-to-end encrypted, the relay forgets them within a minute.</span></li>
+          <li><strong>Or type it in</strong><span>Enter an account manually right on the watch if you prefer.</span></li>
+          <li><strong>App lock</strong><span>Unlock with your watch PIN on start — or every time you come back to the app.</span></li>
+          <li><strong>Export by QR</strong><span>Show any account as a QR code to move it to another authenticator.</span></li>
+          <li><strong>Made for a round screen</strong><span>Curved lists, scrolling with the crown, haptic feedback.</span></li>
+          <li><strong>Your own relay</strong><span>Point the app at a relay you run yourself — the server is open source.</span></li>
+        </ul>
+      </div>
     </div>
   </section>
 
