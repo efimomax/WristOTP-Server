@@ -2,6 +2,39 @@
 
 [English](#english) · [Русский](#русский)
 
+The relay connects two apps: the **phone companion app**, where you add an
+account and get a one-time sync code, and the **watch app**, where you type
+that code and the account arrives — end-to-end encrypted through this relay.
+<br>
+Релей связывает два приложения: **приложение-компаньон на телефоне** (там
+добавляется аккаунт и появляется код синхронизации) и **приложение на часах**
+(там вводится этот код, и аккаунт приходит — со сквозным шифрованием через
+этот релей).
+
+### On the phone / На телефоне
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/phone-1-main.png" width="200" alt="Main screen"><br><sub>Add an account<br>Добавить аккаунт</sub></td>
+    <td align="center"><img src="docs/screenshots/phone-2-manual-entry.png" width="200" alt="Manual entry"><br><sub>Enter it manually or scan a QR<br>Ввести вручную или по QR</sub></td>
+    <td align="center"><img src="docs/screenshots/phone-3-connect-watch.png" width="200" alt="Connect your watch"><br><sub>Scan the watch ID once<br>Один раз отсканировать часы</sub></td>
+    <td align="center"><img src="docs/screenshots/phone-4-sync-code.png" width="200" alt="Sync code"><br><sub>Get a one-time code<br>Получить одноразовый код</sub></td>
+  </tr>
+</table>
+
+### On the watch / На часах
+
+<table>
+  <tr>
+    <td align="center"><img src="docs/screenshots/watch-1-add-menu.png" width="180" alt="Add account menu"><br><sub>Sync from Phone<br>Синхронизация с телефона</sub></td>
+    <td align="center"><img src="docs/screenshots/watch-2-sync-keypad.png" width="180" alt="Sync code keypad"><br><sub>Type the same code<br>Ввести тот же код</sub></td>
+    <td align="center"><img src="docs/screenshots/watch-3-folder.png" width="180" alt="Codes in a folder"><br><sub>Codes, grouped in folders<br>Коды, разложенные по папкам</sub></td>
+    <td align="center"><img src="docs/screenshots/watch-4-code.png" width="180" alt="One account"><br><sub>Live code with a timer<br>Живой код с таймером</sub></td>
+  </tr>
+</table>
+
+<sub>Screenshots use a demo account. / На скриншотах — демо-аккаунт.</sub>
+
 ## English
 
 The server part of **WristOTP**, a TOTP authenticator for Huawei watches
