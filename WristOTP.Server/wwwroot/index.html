@@ -414,6 +414,22 @@
   .features li strong{font-size:.95rem}
   .features li span{color:var(--text-secondary);font-size:.86rem;line-height:1.45}
 
+  /* Language switcher EN / RU / DE. English is in the HTML itself; RU/DE
+     come from the I18N dictionary in the script below.
+     Переключатель языка EN / RU / DE. Английский — в самом HTML; RU/DE —
+     из словаря I18N в скрипте ниже. */
+  .lang-switch{
+    position:fixed;top:14px;right:14px;z-index:20;display:flex;gap:2px;
+    background:rgba(17,17,20,.85);border:1px solid var(--border);border-radius:999px;padding:3px;
+    backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  }
+  .lang-switch button{
+    background:none;border:0;color:var(--text-secondary);cursor:pointer;
+    font:600 .72rem/1 inherit;letter-spacing:.06em;padding:6px 10px;border-radius:999px;
+  }
+  .lang-switch button:hover{color:var(--text)}
+  .lang-switch button[aria-pressed="true"]{background:var(--accent);color:#fff}
+
   footer{padding:32px 0 60px;text-align:center;color:var(--text-secondary);font-size:.82rem}
   footer a{color:var(--accent);text-decoration:none}
   footer a:hover{text-decoration:underline}
@@ -446,65 +462,71 @@
 </head>
 <body>
 
+<div class="lang-switch" role="group" aria-label="Language">
+  <button type="button" data-lang="en">EN</button>
+  <button type="button" data-lang="ru">RU</button>
+  <button type="button" data-lang="de">DE</button>
+</div>
+
 <div class="glow" aria-hidden="true"><i></i><i></i></div>
 
 <div class="wrap">
 
   <div class="hero reveal">
     <div class="brand"><span class="dot-wrap"><span class="dot"></span><span class="dot-ring"></span></span> WristOTP Relay</div>
-    <h1>A dead-drop for your two-factor codes</h1>
-    <p class="tagline">A tiny, ephemeral relay that hands an encrypted account off from your phone to your watch — and forgets it existed within a minute.</p>
+    <h1 data-i18n="hero.title">A dead-drop for your two-factor codes</h1>
+    <p data-i18n="hero.tagline" class="tagline">A tiny, ephemeral relay that hands an encrypted account off from your phone to your watch — and forgets it existed within a minute.</p>
 
     <div class="platform-pill">
       <img src="/images/wristotp-watch-logo.png" alt="" width="28" height="28">
-      <span>Built for Huawei Watch · HarmonyOS</span>
+      <span data-i18n="hero.platform">Built for Huawei Watch · HarmonyOS</span>
     </div>
 
     <div class="stats stagger">
-      <div class="stat"><div class="n" id="stat-active">–</div><div class="l">Waiting to be picked up</div></div>
-      <div class="stat"><div class="n" id="stat-put">–</div><div class="l">Total received</div></div>
-      <div class="stat"><div class="n" id="stat-claimed">–</div><div class="l">Total picked up</div></div>
-      <div class="stat"><div class="n" id="stat-uptime">–</div><div class="l">Uptime</div></div>
+      <div class="stat"><div class="n" id="stat-active">–</div><div data-i18n="stat.active" class="l">Waiting to be picked up</div></div>
+      <div class="stat"><div class="n" id="stat-put">–</div><div data-i18n="stat.put" class="l">Total received</div></div>
+      <div class="stat"><div class="n" id="stat-claimed">–</div><div data-i18n="stat.claimed" class="l">Total picked up</div></div>
+      <div class="stat"><div class="n" id="stat-uptime">–</div><div data-i18n="stat.uptime" class="l">Uptime</div></div>
     </div>
 
     <div class="delivered" aria-live="polite">
       <span class="delivered-n" id="stat-delivered">–</span>
-      <span class="delivered-l">accounts delivered to watches since launch</span>
+      <span data-i18n="delivered" class="delivered-l">accounts delivered to watches since launch</span>
     </div>
 
-    <div class="pulse-caption">Requests received · number per 5s, last 60 seconds</div>
+    <div data-i18n="pulse.caption" class="pulse-caption">Requests received · number per 5s, last 60 seconds</div>
     <div class="pulse-wrap" id="pulse-wrap" aria-hidden="true">
       <div class="pulse-track" id="pulse-track"></div>
     </div>
-    <div class="pulse-axis" aria-hidden="true"><span>60s ago</span><span>now</span></div>
+    <div class="pulse-axis" aria-hidden="true"><span data-i18n="pulse.ago">60s ago</span><span data-i18n="pulse.now">now</span></div>
   </div>
 
   <section class="reveal">
-    <div class="kicker">Security</div>
-    <h2>Yes, it's actually safe</h2>
-    <p class="sub">The short version: this server never sees your account name, your secret key, or your codes. It only ever holds a locked box it can't open, for at most 60 seconds.</p>
+    <div data-i18n="sec.kicker" class="kicker">Security</div>
+    <h2 data-i18n="sec.title">Yes, it's actually safe</h2>
+    <p data-i18n="sec.sub" class="sub">The short version: this server never sees your account name, your secret key, or your codes. It only ever holds a locked box it can't open, for at most 60 seconds.</p>
     <div class="sec-grid">
       <div class="card">
-        <h3>🔒 In plain words</h3>
-        <p>Your phone locks your account data in a box before it ever leaves the phone. The box is sent here, your watch picks it up, and the watch is the only other device with the key to open it.</p>
-        <p>The box disappears the instant your watch grabs it — or after one minute, whichever happens first. Nothing is written to disk. Nothing is backed up. There is no database.</p>
+        <h3 data-i18n="sec.plain.title">🔒 In plain words</h3>
+        <p data-i18n="sec.plain.p1">Your phone locks your account data in a box before it ever leaves the phone. The box is sent here, your watch picks it up, and the watch is the only other device with the key to open it.</p>
+        <p data-i18n="sec.plain.p2">The box disappears the instant your watch grabs it — or after one minute, whichever happens first. Nothing is written to disk. Nothing is backed up. There is no database.</p>
       </div>
       <div class="card">
-        <h3>🛠️ In technical words</h3>
+        <h3 data-i18n="sec.tech.title">🛠️ In technical words</h3>
         <ul>
-          <li>Phone and watch each derive the same one-time key from your watch's device ID and a short sync code, via <code>HKDF-SHA256</code> — the server never sees either input.</li>
-          <li>The payload is sealed with <code>AES-256-GCM</code> before it's uploaded. This server stores only ciphertext, an IV, and an auth tag — opaque bytes it cannot decrypt.</li>
-          <li>Storage is in-memory only (<code>IMemoryCache</code>), keyed by a derived lookup ID. TTL: <strong>60 seconds</strong>, one-time read — a successful fetch deletes the entry immediately, TTL or not.</li>
-          <li>No logs, no persistence layer, no account database exists in this service at all — there is nothing to breach.</li>
+          <li data-i18n="sec.tech.li1">Phone and watch each derive the same one-time key from your watch's device ID and a short sync code, via <code>HKDF-SHA256</code> — the server never sees either input.</li>
+          <li data-i18n="sec.tech.li2">The payload is sealed with <code>AES-256-GCM</code> before it's uploaded. This server stores only ciphertext, an IV, and an auth tag — opaque bytes it cannot decrypt.</li>
+          <li data-i18n="sec.tech.li3">Storage is in-memory only (<code>IMemoryCache</code>), keyed by a derived lookup ID. TTL: <strong>60 seconds</strong>, one-time read — a successful fetch deletes the entry immediately, TTL or not.</li>
+          <li data-i18n="sec.tech.li4">No logs, no persistence layer, no account database exists in this service at all — there is nothing to breach.</li>
         </ul>
       </div>
     </div>
   </section>
 
   <section class="reveal">
-    <div class="kicker">How it works</div>
-    <h2>Five taps, end to end</h2>
-    <p class="sub">Only one moment along this chain ever leaves your two devices — a sealed, unreadable box that lives on this relay for at most 60 seconds.</p>
+    <div data-i18n="how.kicker" class="kicker">How it works</div>
+    <h2 data-i18n="how.title">Five taps, end to end</h2>
+    <p data-i18n="how.sub" class="sub">Only one moment along this chain ever leaves your two devices — a sealed, unreadable box that lives on this relay for at most 60 seconds.</p>
     <div class="flow">
       <div class="step">
         <div class="n">1</div>
@@ -514,10 +536,10 @@
             <rect x="15" y="15" width="2.4" height="2.4" rx=".4"/><rect x="19.6" y="15" width="2.4" height="2.4" rx=".4"/><rect x="15" y="19.6" width="2.4" height="2.4" rx=".4"/>
             <path d="M12 3v4M12 10.5v1M9 12h2M15 12h2.6M12 15v2M12 20.4v.6"/>
           </svg>
-          <span class="shot-hint">View screenshot</span>
+          <span data-i18n="shot.hint" class="shot-hint">View screenshot</span>
         </div>
-        <h4>Add the account</h4>
-        <p>Scan its QR code in the Companion app, or type the secret in by hand.</p>
+        <h4 data-i18n="step1.title">Add the account</h4>
+        <p data-i18n="step1.text">Scan its QR code in the Companion app, or type the secret in by hand.</p>
       </div>
       <div class="step">
         <div class="n">2</div>
@@ -526,10 +548,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="7" y="4" width="10" height="16" rx="3"/><path d="M9 2h6v3H9zM9 19h6v3H9z"/><rect x="9.5" y="9.5" width="5" height="5" rx=".6"/>
           </svg>
-          <span class="shot-hint">View screenshot</span>
+          <span data-i18n="shot.hint" class="shot-hint">View screenshot</span>
         </div>
-        <h4>Point it at your watch</h4>
-        <p>Scan the watch's QR code — or reuse an ID you already scanned before.</p>
+        <h4 data-i18n="step2.title">Point it at your watch</h4>
+        <p data-i18n="step2.text">Scan the watch's QR code — or reuse an ID you already scanned before.</p>
       </div>
       <div class="step">
         <div class="n">3</div>
@@ -537,10 +559,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="9"/><path d="M6 12h.01M8.4 12h.01M10.8 12h.01M13.2 12h.01M15.6 12h.01M18 12h.01" stroke-width="2.4"/>
           </svg>
-          <span class="shot-hint">View screenshot</span>
+          <span data-i18n="shot.hint" class="shot-hint">View screenshot</span>
         </div>
-        <h4>Get your one-time code</h4>
-        <p>The app shows a short sync code right on your phone screen.</p>
+        <h4 data-i18n="step3.title">Get your one-time code</h4>
+        <p data-i18n="step3.text">The app shows a short sync code right on your phone screen.</p>
       </div>
       <div class="step">
         <div class="n">4</div>
@@ -548,10 +570,10 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="7" y="4" width="10" height="16" rx="3"/><path d="M9 11h.01M12 11h.01M15 11h.01M9 14h.01M12 14h.01M15 14h.01" stroke-width="2.4"/>
           </svg>
-          <span class="shot-hint">View screenshot</span>
+          <span data-i18n="shot.hint" class="shot-hint">View screenshot</span>
         </div>
-        <h4>Type it into the watch</h4>
-        <p>Enter that same code on the watch's on-screen keypad.</p>
+        <h4 data-i18n="step4.title">Type it into the watch</h4>
+        <p data-i18n="step4.text">Enter that same code on the watch's on-screen keypad.</p>
       </div>
       <div class="step">
         <div class="n">5</div>
@@ -559,69 +581,69 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
             <rect x="7" y="4" width="10" height="16" rx="3"/><path d="M8 12h.01M9.6 12h.01M11.2 12h.01M12.8 12h.01M14.4 12h.01M16 12h.01" stroke-width="2"/>
           </svg>
-          <span class="shot-hint">View screenshot</span>
+          <span data-i18n="shot.hint" class="shot-hint">View screenshot</span>
         </div>
-        <h4>Codes appear on your watch</h4>
-        <p>The watch fetches the account and starts generating codes right there.</p>
+        <h4 data-i18n="step5.title">Codes appear on your watch</h4>
+        <p data-i18n="step5.text">The watch fetches the account and starts generating codes right there.</p>
       </div>
     </div>
   </section>
 
   <section class="reveal">
-    <div class="kicker">See it in action</div>
-    <h2>The same account, on both screens</h2>
-    <p class="sub">Add it on the phone, type a one-time code on the watch — and it&#39;s there. (Screenshots use a demo account.)</p>
+    <div data-i18n="see.kicker" class="kicker">See it in action</div>
+    <h2 data-i18n="see.title">The same account, on both screens</h2>
+    <p data-i18n="see.sub" class="sub">Add it on the phone, type a one-time code on the watch — and it&#39;s there. (Screenshots use a demo account.)</p>
     <div class="gallery">
       <figure>
         <img src="/images/screenshots/phone-flow.png" alt="Phone app: add an account, connect the watch, get a one-time sync code" loading="lazy" width="1300" height="621">
-        <figcaption>On the phone</figcaption>
+        <figcaption data-i18n="see.phone">On the phone</figcaption>
       </figure>
       <figure>
         <img src="/images/screenshots/watch-flow.png" alt="Watch app: sync from phone, type the code, codes in folders, live code with a timer" loading="lazy" width="1300" height="272">
-        <figcaption>On the watch</figcaption>
+        <figcaption data-i18n="see.watch">On the watch</figcaption>
       </figure>
       <div>
-        <h3 class="features-title">What the watch app does</h3>
+        <h3 data-i18n="feat.title" class="features-title">What the watch app does</h3>
         <ul class="features">
-          <li><strong>Codes on your wrist</strong><span>Standard 6-digit TOTP codes with a countdown ring — generated on the watch itself, no phone or internet needed.</span></li>
-          <li><strong>Folders</strong><span>Group codes into folders (Work, Banking…). Deleting a folder never deletes the codes inside.</span></li>
-          <li><strong>Sync from the phone</strong><span>Add accounts with a 6-digit one-time code — end-to-end encrypted, the relay forgets them within a minute.</span></li>
-          <li><strong>Or type it in</strong><span>Enter an account manually right on the watch if you prefer.</span></li>
-          <li><strong>App lock</strong><span>Unlock with your watch PIN on start — or every time you come back to the app.</span></li>
-          <li><strong>Export by QR</strong><span>Show any account as a QR code to move it to another authenticator.</span></li>
-          <li><strong>Made for a round screen</strong><span>Curved lists, scrolling with the crown, haptic feedback.</span></li>
-          <li><strong>Your own relay</strong><span>Point the app at a relay you run yourself — the server is open source.</span></li>
+          <li data-i18n="feat1"><strong>Codes on your wrist</strong><span>Standard 6-digit TOTP codes with a countdown ring — generated on the watch itself, no phone or internet needed.</span></li>
+          <li data-i18n="feat2"><strong>Folders</strong><span>Group codes into folders (Work, Banking…). Deleting a folder never deletes the codes inside.</span></li>
+          <li data-i18n="feat3"><strong>Sync from the phone</strong><span>Add accounts with a 6-digit one-time code — end-to-end encrypted, the relay forgets them within a minute.</span></li>
+          <li data-i18n="feat4"><strong>Or type it in</strong><span>Enter an account manually right on the watch if you prefer.</span></li>
+          <li data-i18n="feat5"><strong>App lock</strong><span>Unlock with your watch PIN on start — or every time you come back to the app.</span></li>
+          <li data-i18n="feat6"><strong>Export by QR</strong><span>Show any account as a QR code to move it to another authenticator.</span></li>
+          <li data-i18n="feat7"><strong>Made for a round screen</strong><span>Curved lists, scrolling with the crown, haptic feedback.</span></li>
+          <li data-i18n="feat8"><strong>Your own relay</strong><span>Point the app at a relay you run yourself — the server is open source.</span></li>
         </ul>
       </div>
     </div>
   </section>
 
   <section class="reveal">
-    <div class="kicker">Get the apps</div>
-    <h2>Two small apps, one account</h2>
-    <p class="sub">They're not the same app — one lives on your wrist, the other sets it up.</p>
+    <div data-i18n="apps.kicker" class="kicker">Get the apps</div>
+    <h2 data-i18n="apps.title">Two small apps, one account</h2>
+    <p data-i18n="apps.sub" class="sub">They're not the same app — one lives on your wrist, the other sets it up.</p>
 
     <div class="sec-grid">
       <div class="card app-card">
         <div class="app-group-head">
           <img class="app-logo" src="/images/wristotp-watch-logo.png" alt="" width="44" height="44">
           <div>
-            <h3>On your watch</h3>
-            <p>Huawei Watch · HarmonyOS</p>
+            <h3 data-i18n="watch.title">On your watch</h3>
+            <p data-i18n="watch.platform">Huawei Watch · HarmonyOS</p>
           </div>
         </div>
-        <p class="app-desc">The app that actually generates your codes — offline, once an account has been sent to it.</p>
+        <p data-i18n="watch.desc" class="app-desc">The app that actually generates your codes — offline, once an account has been sent to it.</p>
         <div class="howto">
           <div class="howto-head">
-            <span class="howto-title">How to install on the watch</span>
-            <span class="soon-inline">Coming soon</span>
+            <span data-i18n="howto.title" class="howto-title">How to install on the watch</span>
+            <span data-i18n="soon" class="soon-inline">Coming soon</span>
           </div>
-          <p class="howto-note">Watch apps have no web page in AppGallery — they are installed from your phone:</p>
+          <p data-i18n="howto.note" class="howto-note">Watch apps have no web page in AppGallery — they are installed from your phone:</p>
           <ol>
-            <li>Open the <strong>Huawei Health</strong> app on your phone (Android or iPhone).</li>
-            <li>Go to <strong>Devices</strong> and tap your watch.</li>
-            <li>Open <strong>AppGallery</strong>.</li>
-            <li>Search for <strong>WristOTP</strong> and tap <strong>Install</strong>.</li>
+            <li data-i18n="howto.li1">Open the <strong>Huawei Health</strong> app on your phone (Android or iPhone).</li>
+            <li data-i18n="howto.li2">Go to <strong>Devices</strong> and tap your watch.</li>
+            <li data-i18n="howto.li3">Open <strong>AppGallery</strong>.</li>
+            <li data-i18n="howto.li4">Search for <strong>WristOTP</strong> and tap <strong>Install</strong>.</li>
           </ol>
         </div>
       </div>
@@ -630,21 +652,21 @@
         <div class="app-group-head">
           <div class="app-logo app-logo--generic">📱</div>
           <div>
-            <h3>On your phone</h3>
-            <p>Companion app · iOS &amp; Android</p>
+            <h3 data-i18n="phone.title">On your phone</h3>
+            <p data-i18n="phone.platform">Companion app · iOS &amp; Android</p>
           </div>
         </div>
-        <p class="app-desc">How accounts get onto the watch in the first place — scan a QR code, type a secret in, or import from another authenticator.</p>
+        <p data-i18n="phone.desc" class="app-desc">How accounts get onto the watch in the first place — scan a QR code, type a secret in, or import from another authenticator.</p>
         <div class="badges">
           <a class="badge" href="#" aria-disabled="true">
-            <span class="soon">Coming soon</span>
+            <span data-i18n="soon" class="soon">Coming soon</span>
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.365 1.43c0 1.14-.462 2.245-1.196 3.045-.8.86-2.107 1.53-3.19 1.44-.135-1.11.42-2.28 1.15-3.03.8-.85 2.19-1.48 3.236-1.455zM20.62 17.02c-.44 1.02-.97 2.02-1.62 2.95-.9 1.28-1.84 2.55-3.31 2.58-1.45.03-1.92-.86-3.58-.86-1.66 0-2.18.83-3.55.89-1.42.06-2.5-1.38-3.4-2.65-1.85-2.6-3.27-7.35-1.37-10.56.94-1.6 2.63-2.6 4.46-2.63 1.4-.03 2.72.93 3.58.93.85 0 2.46-1.15 4.15-.98.71.03 2.7.28 3.98 2.14-.1.06-2.38 1.36-2.35 4.07.02 3.23 2.86 4.31 2.9 4.33-.02.07-.44 1.46-1.42 2.83z"/></svg>
-            <span class="t"><small>Download on the</small><strong>App Store</strong></span>
+            <span class="t"><small data-i18n="badge.appstore">Download on the</small><strong>App Store</strong></span>
           </a>
           <a class="badge" href="#" aria-disabled="true">
-            <span class="soon">Coming soon</span>
+            <span data-i18n="soon" class="soon">Coming soon</span>
             <svg viewBox="0 0 24 24" fill="currentColor"><path d="M3.6 2.2c-.35.2-.6.6-.6 1.1v17.4c0 .5.25.9.6 1.1l9.8-9.8-9.8-9.8z"/><path d="M15.9 10.5l2.7-1.55c.6-.35.6-1.2 0-1.55L15.9 5.85 13.4 8.3l2.5 2.2z" opacity=".75"/><path d="M3.9 21.4c.25.1.55.05.8-.1l11.4-6.55-2.6-2.6L3.9 21.4z" opacity=".9"/><path d="M3.9 2.6l9.6 9.6 2.6-2.6L4.7 2.5c-.25-.15-.55-.2-.8-.1z" opacity=".9"/></svg>
-            <span class="t"><small>GET IT ON</small><strong>Google Play</strong></span>
+            <span class="t"><small data-i18n="badge.play">GET IT ON</small><strong>Google Play</strong></span>
           </a>
         </div>
       </div>
@@ -652,24 +674,24 @@
   </section>
 
   <section class="reveal oss-section" id="oss" hidden>
-    <div class="kicker">Open source</div>
-    <h2>Don&#39;t trust it — check it</h2>
+    <div data-i18n="oss.kicker" class="kicker">Open source</div>
+    <h2 data-i18n="oss.title">Don&#39;t trust it — check it</h2>
     <div class="card oss">
       <svg class="gh" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.65.5.5 5.65.5 12a11.5 11.5 0 0 0 7.86 10.92c.58.1.79-.25.79-.56v-2c-3.2.7-3.87-1.37-3.87-1.37-.52-1.33-1.28-1.69-1.28-1.69-1.04-.71.08-.7.08-.7 1.15.08 1.76 1.19 1.76 1.19 1.03 1.76 2.69 1.25 3.35.96.1-.75.4-1.25.73-1.54-2.55-.29-5.24-1.28-5.24-5.68 0-1.25.45-2.28 1.18-3.08-.12-.29-.51-1.46.11-3.04 0 0 .97-.31 3.17 1.18a11 11 0 0 1 5.77 0c2.2-1.49 3.17-1.18 3.17-1.18.63 1.58.23 2.75.11 3.04.74.8 1.18 1.83 1.18 3.08 0 4.41-2.69 5.38-5.25 5.67.41.36.78 1.06.78 2.14v3.17c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.65 18.35.5 12 .5z"/></svg>
       <div class="oss-text">
-        <h3>The relay is open source</h3>
-        <p>You can verify the code yourself. Extra careful? Run the relay on your own computer or server and point the watch and phone apps to it — your data will never touch this server.</p>
+        <h3 data-i18n="oss.h3">The relay is open source</h3>
+        <p data-i18n="oss.p">You can verify the code yourself. Extra careful? Run the relay on your own computer or server and point the watch and phone apps to it — your data will never touch this server.</p>
       </div>
-      <a class="oss-btn" href="#" id="oss-link" target="_blank" rel="noopener noreferrer">View on GitHub</a>
+      <a data-i18n="oss.btn" class="oss-btn" href="#" id="oss-link" target="_blank" rel="noopener noreferrer">View on GitHub</a>
     </div>
   </section>
 
   <footer>
-    Nothing above identifies a device, an account, or a person — only counts. ·
-    Relay online since <span id="footer-since">–</span>
+    <span data-i18n="footer.note">Nothing above identifies a device, an account, or a person — only counts. ·</span>
+    <span data-i18n="footer.since">Relay online since</span> <span id="footer-since">–</span>
     <div class="copyright">
       WristOTP · 2026
-      <a href="/privacy">Privacy Policy</a>
+      <a data-i18n="footer.privacy" id="privacy-link" href="/privacy">Privacy Policy</a>
       <a href="#" id="github-link" target="_blank" rel="noopener noreferrer" hidden>GitHub</a>
     </div>
   </footer>
@@ -693,6 +715,50 @@
 (function(){
   "use strict";
 
+  // ---- Translations (EN is in the HTML; RU and DE here) ----
+  // ---- Переводы (EN — в самом HTML; RU и DE — здесь) ----
+  var I18N = {ru: {"hero.title": "Тайник для ваших кодов двухфакторной защиты", "hero.tagline": "Крошечный эфемерный релей, который передаёт зашифрованный аккаунт с телефона на часы — и забывает о нём в течение минуты.", "hero.platform": "Для часов Huawei · HarmonyOS", "stat.active": "Ожидают получения", "stat.put": "Всего получено", "stat.claimed": "Всего забрано", "stat.uptime": "Время работы", "delivered": "аккаунтов доставлено на часы с момента запуска", "pulse.caption": "Полученные запросы · количество за 5 с, последние 60 секунд", "pulse.ago": "60 с назад", "pulse.now": "сейчас", "sec.kicker": "Безопасность", "sec.title": "Да, это действительно безопасно", "sec.sub": "Если коротко: сервер никогда не видит название вашего аккаунта, секретный ключ или коды. У него бывает только запертая коробка, которую он не может открыть, — и не дольше 60 секунд.", "sec.plain.title": "🔒 Простыми словами", "sec.plain.p1": "Телефон запирает данные аккаунта в коробку ещё до того, как они его покинут. Коробка отправляется сюда, часы её забирают — и только у часов есть второй ключ, чтобы её открыть.", "sec.plain.p2": "Коробка исчезает в тот момент, когда её забирают часы, — или через минуту, что наступит раньше. Ничего не пишется на диск. Нет резервных копий. Нет базы данных.", "sec.tech.title": "🛠️ Технически", "sec.tech.li1": "Телефон и часы независимо вычисляют один и тот же одноразовый ключ из идентификатора часов и короткого кода синхронизации через <code>HKDF-SHA256</code> — сервер не видит ни того, ни другого.", "sec.tech.li2": "Перед отправкой данные запечатываются <code>AES-256-GCM</code>. Сервер хранит только шифротекст, IV и тег аутентификации — непрозрачные байты, которые он не может расшифровать.", "sec.tech.li3": "Хранение — только в памяти (<code>IMemoryCache</code>) по производному идентификатору. Срок жизни: <strong>60 секунд</strong>, одноразовое чтение — успешное получение сразу удаляет запись.", "sec.tech.li4": "Нет журналов, нет постоянного хранилища, нет базы учётных записей — взламывать здесь нечего.", "how.kicker": "Как это работает", "how.title": "Пять шагов — и готово", "how.sub": "Только один момент в этой цепочке выходит за пределы ваших двух устройств — запечатанная нечитаемая коробка, которая живёт на этом релее не дольше 60 секунд.", "step1.title": "Добавьте аккаунт", "step1.text": "Отсканируйте его QR-код в приложении-компаньоне или введите секрет вручную.", "step2.title": "Укажите свои часы", "step2.text": "Отсканируйте QR-код часов — или используйте ID, отсканированный раньше.", "step3.title": "Получите одноразовый код", "step3.text": "Приложение показывает короткий код синхронизации прямо на экране телефона.", "step4.title": "Введите его на часах", "step4.text": "Наберите тот же код на клавиатуре часов.", "step5.title": "Коды появляются на часах", "step5.text": "Часы забирают аккаунт и сразу начинают генерировать коды.", "shot.hint": "Посмотреть скриншот", "see.kicker": "В действии", "see.title": "Один аккаунт — на двух экранах", "see.sub": "Добавьте его на телефоне, введите одноразовый код на часах — и он там. (На скриншотах — демо-аккаунт.)", "see.phone": "На телефоне", "see.watch": "На часах", "feat.title": "Что умеет приложение для часов", "feat1": "<strong>Коды на запястье</strong><span>Стандартные 6-значные TOTP-коды с кольцом обратного отсчёта — считаются на самих часах, без телефона и интернета.</span>", "feat2": "<strong>Папки</strong><span>Коды можно разложить по папкам (Работа, Банки…). Удаление папки никогда не удаляет коды в ней.</span>", "feat3": "<strong>Синхронизация с телефона</strong><span>Аккаунты добавляются по 6-значному одноразовому коду — со сквозным шифрованием, релей забывает их в течение минуты.</span>", "feat4": "<strong>Или ввести вручную</strong><span>Аккаунт можно ввести прямо на часах.</span>", "feat5": "<strong>Блокировка</strong><span>Вход по PIN-коду часов при запуске — или при каждом возвращении в приложение.</span>", "feat6": "<strong>Экспорт по QR</strong><span>Любой аккаунт можно показать QR-кодом, чтобы перенести его в другой аутентификатор.</span>", "feat7": "<strong>Для круглого экрана</strong><span>Дуговые списки, прокрутка колёсиком, тактильный отклик.</span>", "feat8": "<strong>Свой релей</strong><span>Приложение можно направить на свой сервер-релей — его код открыт.</span>", "apps.kicker": "Приложения", "apps.title": "Два небольших приложения, один аккаунт", "apps.sub": "Это не одно и то же приложение — одно живёт на запястье, другое его настраивает.", "watch.title": "На часах", "watch.platform": "Часы Huawei · HarmonyOS", "watch.desc": "Приложение, которое и генерирует коды — без интернета, как только аккаунт на него отправлен.", "howto.title": "Как установить на часы", "soon": "Скоро", "howto.note": "У приложений для часов нет веб-страницы в AppGallery — их ставят с телефона:", "howto.li1": "Откройте на телефоне приложение <strong>Huawei Health</strong> (Android или iPhone).", "howto.li2": "Перейдите в <strong>Устройства</strong> и выберите свои часы.", "howto.li3": "Откройте <strong>AppGallery</strong>.", "howto.li4": "Найдите <strong>WristOTP</strong> и нажмите <strong>Установить</strong>.", "phone.title": "На телефоне", "phone.platform": "Приложение-компаньон · iOS и Android", "phone.desc": "Через него аккаунты и попадают на часы — отсканируйте QR-код, введите секрет или импортируйте из другого аутентификатора.", "badge.appstore": "Загрузите в", "badge.play": "Доступно в", "oss.kicker": "Открытый код", "oss.title": "Не верьте на слово — проверьте", "oss.h3": "Код релея открыт", "oss.p": "Код можно проверить самому. Хотите ещё надёжнее? Запустите релей на своём компьютере или сервере и укажите его в приложениях для часов и телефона — ваши данные вообще не попадут на этот сервер.", "oss.btn": "Открыть на GitHub", "footer.note": "Ничто выше не указывает на устройство, аккаунт или человека — только счётчики. ·", "footer.since": "Релей работает с", "footer.privacy": "Политика конфиденциальности", "shot.aria": "Посмотреть скриншот: "}, de: {"hero.title": "Ein toter Briefkasten für Ihre Zwei-Faktor-Codes", "hero.tagline": "Ein winziges, flüchtiges Relay, das ein verschlüsseltes Konto vom Smartphone an Ihre Uhr übergibt — und es innerhalb einer Minute wieder vergisst.", "hero.platform": "Für Huawei-Uhren · HarmonyOS", "stat.active": "Warten auf Abholung", "stat.put": "Insgesamt empfangen", "stat.claimed": "Insgesamt abgeholt", "stat.uptime": "Laufzeit", "delivered": "Konten seit dem Start an Uhren übertragen", "pulse.caption": "Empfangene Anfragen · Anzahl pro 5 s, letzte 60 Sekunden", "pulse.ago": "vor 60 s", "pulse.now": "jetzt", "sec.kicker": "Sicherheit", "sec.title": "Ja, das ist wirklich sicher", "sec.sub": "Kurz gesagt: Dieser Server sieht nie Ihren Kontonamen, Ihren geheimen Schlüssel oder Ihre Codes. Er hält nur eine verschlossene Box, die er nicht öffnen kann — höchstens 60 Sekunden lang.", "sec.plain.title": "🔒 In einfachen Worten", "sec.plain.p1": "Ihr Smartphone schließt die Kontodaten in eine Box ein, bevor sie das Gerät überhaupt verlassen. Die Box wird hierher geschickt, Ihre Uhr holt sie ab — und nur die Uhr hat den zweiten Schlüssel, um sie zu öffnen.", "sec.plain.p2": "Die Box verschwindet in dem Moment, in dem Ihre Uhr sie abholt — oder nach einer Minute, je nachdem, was zuerst eintritt. Nichts wird auf die Festplatte geschrieben. Es gibt keine Sicherungen. Es gibt keine Datenbank.", "sec.tech.title": "🛠️ Technisch", "sec.tech.li1": "Smartphone und Uhr leiten unabhängig denselben Einmalschlüssel aus der Geräte-ID der Uhr und einem kurzen Sync-Code ab, per <code>HKDF-SHA256</code> — der Server sieht keine der beiden Eingaben.", "sec.tech.li2": "Die Daten werden vor dem Hochladen mit <code>AES-256-GCM</code> versiegelt. Dieser Server speichert nur Chiffretext, einen IV und ein Auth-Tag — undurchsichtige Bytes, die er nicht entschlüsseln kann.", "sec.tech.li3": "Gespeichert wird nur im Arbeitsspeicher (<code>IMemoryCache</code>) unter einer abgeleiteten Lookup-ID. TTL: <strong>60 Sekunden</strong>, einmaliges Lesen — ein erfolgreicher Abruf löscht den Eintrag sofort.", "sec.tech.li4": "Keine Logs, keine dauerhafte Speicherung, keine Kontendatenbank — hier gibt es nichts, was man knacken könnte.", "how.kicker": "So funktioniert es", "how.title": "Fünf Schritte, von Anfang bis Ende", "how.sub": "Nur ein einziger Moment dieser Kette verlässt Ihre beiden Geräte — eine versiegelte, unlesbare Box, die höchstens 60 Sekunden auf diesem Relay liegt.", "step1.title": "Konto hinzufügen", "step1.text": "Scannen Sie den QR-Code in der Begleit-App oder geben Sie den Schlüssel von Hand ein.", "step2.title": "Uhr auswählen", "step2.text": "Scannen Sie den QR-Code der Uhr — oder nutzen Sie eine bereits gescannte ID.", "step3.title": "Einmalcode erhalten", "step3.text": "Die App zeigt einen kurzen Sync-Code direkt auf dem Smartphone an.", "step4.title": "Auf der Uhr eingeben", "step4.text": "Geben Sie denselben Code auf der Tastatur der Uhr ein.", "step5.title": "Codes erscheinen auf der Uhr", "step5.text": "Die Uhr holt das Konto ab und erzeugt sofort Codes.", "shot.hint": "Screenshot ansehen", "see.kicker": "In Aktion", "see.title": "Ein Konto, auf beiden Bildschirmen", "see.sub": "Auf dem Smartphone hinzufügen, den Einmalcode auf der Uhr eingeben — fertig. (Die Screenshots zeigen ein Demo-Konto.)", "see.phone": "Auf dem Smartphone", "see.watch": "Auf der Uhr", "feat.title": "Was die Uhr-App kann", "feat1": "<strong>Codes am Handgelenk</strong><span>Standardmäßige 6-stellige TOTP-Codes mit Countdown-Ring — direkt auf der Uhr erzeugt, ohne Smartphone oder Internet.</span>", "feat2": "<strong>Ordner</strong><span>Codes in Ordnern gruppieren (Arbeit, Banking…). Das Löschen eines Ordners löscht nie die Codes darin.</span>", "feat3": "<strong>Sync vom Smartphone</strong><span>Konten per 6-stelligem Einmalcode hinzufügen — Ende-zu-Ende-verschlüsselt, das Relay vergisst sie innerhalb einer Minute.</span>", "feat4": "<strong>Oder von Hand</strong><span>Ein Konto bei Bedarf direkt auf der Uhr eingeben.</span>", "feat5": "<strong>App-Sperre</strong><span>Entsperren mit der PIN der Uhr beim Start — oder bei jeder Rückkehr in die App.</span>", "feat6": "<strong>Export per QR</strong><span>Jedes Konto als QR-Code anzeigen, um es in einen anderen Authenticator zu übertragen.</span>", "feat7": "<strong>Für das runde Display</strong><span>Gebogene Listen, Scrollen mit der Krone, haptisches Feedback.</span>", "feat8": "<strong>Eigenes Relay</strong><span>Die App auf ein selbst betriebenes Relay umstellen — der Server ist Open Source.</span>", "apps.kicker": "Die Apps", "apps.title": "Zwei kleine Apps, ein Konto", "apps.sub": "Es ist nicht dieselbe App — eine lebt an Ihrem Handgelenk, die andere richtet sie ein.", "watch.title": "Auf der Uhr", "watch.platform": "Huawei-Uhr · HarmonyOS", "watch.desc": "Die App, die Ihre Codes tatsächlich erzeugt — offline, sobald ein Konto an sie gesendet wurde.", "howto.title": "Installation auf der Uhr", "soon": "Demnächst", "howto.note": "Uhr-Apps haben keine Webseite in der AppGallery — sie werden über das Smartphone installiert:", "howto.li1": "Öffnen Sie die App <strong>Huawei Health</strong> auf Ihrem Smartphone (Android oder iPhone).", "howto.li2": "Gehen Sie zu <strong>Geräte</strong> und tippen Sie auf Ihre Uhr.", "howto.li3": "Öffnen Sie die <strong>AppGallery</strong>.", "howto.li4": "Suchen Sie nach <strong>WristOTP</strong> und tippen Sie auf <strong>Installieren</strong>.", "phone.title": "Auf dem Smartphone", "phone.platform": "Begleit-App · iOS &amp; Android", "phone.desc": "So gelangen Konten überhaupt auf die Uhr — QR-Code scannen, Schlüssel eingeben oder aus einem anderen Authenticator importieren.", "badge.appstore": "Laden im", "badge.play": "Jetzt bei", "oss.kicker": "Open Source", "oss.title": "Nicht vertrauen — nachprüfen", "oss.h3": "Das Relay ist Open Source", "oss.p": "Sie können den Code selbst prüfen. Besonders vorsichtig? Betreiben Sie das Relay auf Ihrem eigenen Rechner oder Server und richten Sie Uhr- und Smartphone-App darauf aus — Ihre Daten berühren diesen Server dann nie.", "oss.btn": "Auf GitHub ansehen", "footer.note": "Nichts hiervon identifiziert ein Gerät, ein Konto oder eine Person — nur Zähler. ·", "footer.since": "Relay online seit", "footer.privacy": "Datenschutzerklärung", "shot.aria": "Screenshot ansehen: "}};
+  var LANGS = ["en", "ru", "de"];
+
+  function pickLanguage(){
+    try { var saved = localStorage.getItem("lang"); if (LANGS.indexOf(saved) >= 0) return saved; } catch (e) {}
+    var list = navigator.languages || [navigator.language || "en"];
+    for (var i = 0; i < list.length; i++) {
+      var code = String(list[i]).slice(0, 2).toLowerCase();
+      if (LANGS.indexOf(code) >= 0) return code;
+    }
+    return "en";
+  }
+
+  function applyLanguage(lang){
+    var dict = I18N[lang] || {};
+    document.documentElement.lang = lang;
+    document.querySelectorAll("[data-i18n]").forEach(function(el){
+      if (el.dataset.i18nEn === undefined) el.dataset.i18nEn = el.innerHTML;
+      var t = dict[el.dataset.i18n];
+      el.innerHTML = (t !== undefined) ? t : el.dataset.i18nEn;
+    });
+    // Screenshot buttons: aria-label = "View screenshot: <step title>"
+    document.querySelectorAll(".step").forEach(function(step){
+      var shot = step.querySelector(".shot"), h = step.querySelector("h4");
+      if (shot && h) shot.setAttribute("aria-label", (dict["shot.aria"] || "View screenshot: ") + h.textContent);
+    });
+    // The privacy page is English + Russian: Russian readers land on their part.
+    var pl = document.getElementById("privacy-link");
+    if (pl) pl.href = lang === "ru" ? "/privacy#ru" : "/privacy";
+    document.querySelectorAll(".lang-switch button").forEach(function(b){
+      b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false");
+    });
+  }
+
+  document.querySelectorAll(".lang-switch button").forEach(function(b){
+    b.addEventListener("click", function(){
+      try { localStorage.setItem("lang", b.dataset.lang); } catch (e) {}
+      applyLanguage(b.dataset.lang);
+    });
+  });
+  applyLanguage(pickLanguage());
+
   function fmt(n){
     if (n === null || n === undefined) return "–";
     return new Intl.NumberFormat().format(n);
@@ -700,7 +766,9 @@
 
   function animateNumber(el, to){
     var from = parseInt(el.dataset.val || "0", 10) || 0;
-    if (from === to) return;
+    // Same value (e.g. 0 on a fresh start): still replace the "–" placeholder.
+    // То же значение (например, 0 после запуска): всё равно заменить "–".
+    if (from === to) { el.textContent = fmt(to); return; }
     el.dataset.val = to;
     var start = performance.now(), dur = 600;
     function step(now){
@@ -891,7 +959,10 @@
   var io = new IntersectionObserver(function(entries){
     entries.forEach(function(e){ if (e.isIntersecting) e.target.classList.add("in"); });
   }, {threshold: .12});
-  document.querySelectorAll(".reveal").forEach(function(el){ io.observe(el); });
+  // .stagger (the stat cards) needs "in" too — it was never observed, so the
+  // cards stayed invisible. / .stagger (карточки статистики) тоже нуждается в
+  // "in" — раньше он не отслеживался, и карточки оставались невидимыми.
+  document.querySelectorAll(".reveal, .stagger").forEach(function(el){ io.observe(el); });
 
   // Screenshot lightbox — opened by click (or Enter/Space) on any of the 5
   // icons in "How it works". A missing screenshot_N.png gives a 404 and
